@@ -1,0 +1,2601 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🧭 ETHAN-HOLD 仓位罗盘 · 资产穿透与硬顶熔断看板</title>
+  <style>
+    /* ==========================================================================
+       Ethan-Hold Standalone Executive Light Mode Theme (Zero-CDN / Offline-First)
+       ========================================================================== */
+    :root {
+      --bg-canvas: #f6f8fa;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f3f4f6;
+      --bg-subtle: #f0f2f5;
+      --border-default: #d0d7de;
+      --border-muted: #e1e4e8;
+      --border-accent: #0969da;
+      --text-primary: #1f2328;
+      --text-secondary: #57606a;
+      --text-muted: #6e7781;
+      --color-primary: #0969da;
+      --color-danger: #cf222e;
+      --color-danger-bg: rgba(207, 34, 46, 0.08);
+      --color-warning: #9a6700;
+      --color-warning-bg: rgba(154, 103, 0, 0.08);
+      --color-success: #1a7f37;
+      --color-success-bg: rgba(26, 127, 55, 0.08);
+      --color-purple: #8250df;
+      --color-cyan: #059669;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-canvas);
+      color: var(--text-primary);
+      font-family: var(--font-stack);
+      line-height: 1.5;
+      font-size: 14px;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 60px;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Tabular numbers for financial metrics */
+    .num {
+      font-variant-numeric: tabular-nums;
+      font-family: var(--font-mono);
+    }
+
+    /* Top Sticky Header */
+    header {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border-default);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .header-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .brand-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      color: var(--text-primary);
+    }
+
+    .brand-subtitle {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .badge-danger {
+      background: var(--color-danger-bg);
+      color: var(--color-danger);
+      border: 1px solid rgba(248, 81, 73, 0.4);
+    }
+
+    .badge-warning {
+      background: var(--color-warning-bg);
+      color: var(--color-warning);
+      border: 1px solid rgba(210, 153, 34, 0.4);
+    }
+
+    .badge-success {
+      background: var(--color-success-bg);
+      color: var(--color-success);
+      border: 1px solid rgba(63, 185, 80, 0.4);
+    }
+
+    .badge-primary {
+      background: rgba(88, 166, 255, 0.15);
+      color: var(--color-primary);
+      border: 1px solid rgba(88, 166, 255, 0.4);
+    }
+
+    .badge-neutral {
+      background: var(--bg-subtle);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-default);
+    }
+
+    /* Circuit Breaker Status Banner */
+    .circuit-banner {
+      background: linear-gradient(90deg, rgba(248, 81, 73, 0.22) 0%, rgba(210, 153, 34, 0.18) 100%);
+      border: 1px solid rgba(248, 81, 73, 0.5);
+      border-radius: var(--radius-md);
+      padding: 12px 18px;
+      margin: 20px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      animation: pulse-border 3s infinite;
+    }
+
+    @keyframes pulse-border {
+      0%, 100% { border-color: rgba(248, 81, 73, 0.5); }
+      50% { border-color: rgba(248, 81, 73, 0.9); box-shadow: 0 0 14px rgba(248, 81, 73, 0.3); }
+    }
+
+    .banner-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .banner-icon {
+      font-size: 26px;
+      flex-shrink: 0;
+    }
+
+    .banner-title {
+      font-weight: 700;
+      font-size: 15px;
+      color: #ff7b72;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .banner-desc {
+      font-size: 12px;
+      color: var(--text-primary);
+      margin-top: 2px;
+    }
+
+    .banner-timer {
+      font-family: var(--font-mono);
+      background: rgba(0, 0, 0, 0.4);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(248, 81, 73, 0.4);
+      font-size: 13px;
+      color: #ff7b72;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* KPI Summary Cards Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+      position: relative;
+    }
+
+    .card:hover {
+      border-color: var(--border-accent);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-value {
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+
+    .card-footer {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .val-danger { color: var(--color-danger); }
+    .val-warning { color: var(--color-warning); }
+    .val-success { color: var(--color-success); }
+    .val-primary { color: var(--color-primary); }
+
+    /* Interactive Tab Navigation */
+    .tab-bar {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid var(--border-default);
+      margin-bottom: 24px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 10px 18px;
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-primary);
+      background: var(--bg-card-hover);
+    }
+
+    .tab-btn.active {
+      color: var(--color-primary);
+      border-bottom-color: var(--color-primary);
+      background: var(--bg-card);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Section Headers */
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    /* Layout Grids */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 960px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Hard-Cap Progress Bars */
+    .cap-bar-group {
+      margin-bottom: 16px;
+    }
+
+    .cap-bar-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .cap-bar-track {
+      height: 12px;
+      background: var(--bg-subtle);
+      border-radius: 6px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--border-default);
+    }
+
+    .cap-bar-fill {
+      height: 100%;
+      border-radius: 6px;
+      transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .cap-bar-threshold {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: #1f2328;
+      z-index: 2;
+      box-shadow: 0 0 4px rgba(0,0,0,0.15);
+    }
+
+    .cap-bar-threshold-label {
+      position: absolute;
+      top: -18px;
+      transform: translateX(-50%);
+      font-size: 10px;
+      font-family: var(--font-mono);
+      color: var(--text-secondary);
+    }
+
+    /* Native SVG Charts Styles */
+    .svg-chart-container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .donut-slice {
+      transition: transform 0.2s ease, opacity 0.2s ease;
+      cursor: pointer;
+    }
+
+    .donut-slice:hover {
+      opacity: 0.85;
+      transform: scale(1.02);
+      transform-origin: center;
+    }
+
+    .donut-center-text {
+      text-anchor: middle;
+      dominant-baseline: middle;
+    }
+
+    /* Horizontal Bar Chart (Top 15 Underlying Holdings) */
+    .bar-row {
+      display: grid;
+      grid-template-columns: 36px 140px 1fr 90px 100px;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      transition: background 0.15s ease;
+      border-bottom: 1px solid var(--border-muted);
+    }
+
+    .bar-row:hover {
+      background: var(--bg-card-hover);
+    }
+
+    .bar-rank {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .bar-rank.top-3 {
+      color: var(--color-warning);
+    }
+
+    .bar-name-wrap {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .bar-name {
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--text-primary);
+    }
+
+    .bar-meta {
+      font-size: 11px;
+      color: var(--text-secondary);
+      display: flex;
+      gap: 4px;
+    }
+
+    .bar-track {
+      height: 10px;
+      background: var(--bg-subtle);
+      border-radius: 5px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 5px;
+      background: linear-gradient(90deg, #388bfd, #58a6ff);
+    }
+
+    .bar-fill-cn {
+      background: linear-gradient(90deg, #f85149, #ff7b72);
+    }
+
+    .bar-weight {
+      text-align: right;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .bar-val {
+      text-align: right;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* Data Tables */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      background: var(--bg-card);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+    }
+
+    th {
+      background: var(--bg-subtle);
+      color: var(--text-secondary);
+      font-weight: 600;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-default);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-muted);
+      color: var(--text-primary);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: var(--bg-card-hover);
+    }
+
+    /* Redundancy Clones Card */
+    .redundancy-box {
+      background: linear-gradient(135deg, rgba(88, 166, 255, 0.1) 0%, rgba(188, 140, 255, 0.1) 100%);
+      border: 1px solid rgba(88, 166, 255, 0.3);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      margin-bottom: 20px;
+    }
+
+    .redundancy-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .clone-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+    }
+
+    .clone-card-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    /* Pre-Trade Simulator Widget */
+    .sim-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-top: 20px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .sim-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .sim-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sim-form {
+      display: grid;
+      grid-template-columns: 2fr 1fr auto;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .sim-form {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .form-control {
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      color: var(--text-primary);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .form-control:focus {
+      border-color: var(--color-primary);
+    }
+
+    .btn {
+      background: var(--color-primary);
+      color: #ffffff;
+      font-weight: 700;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 10px 20px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+      font-size: 14px;
+    }
+
+    .btn:hover {
+      background: #0860ca;
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text-primary);
+      border: 1px solid var(--border-default);
+    }
+
+    .btn-outline:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-accent);
+    }
+
+    .quick-presets {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .preset-chip {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-default);
+      color: var(--text-secondary);
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .preset-chip:hover {
+      color: var(--text-primary);
+      border-color: var(--color-primary);
+      background: var(--bg-card-hover);
+    }
+
+    /* Simulation Result Box */
+    .sim-result-card {
+      border-radius: var(--radius-md);
+      padding: 18px;
+      margin-top: 16px;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .sim-result-card.show {
+      display: block;
+    }
+
+    .sim-result-danger {
+      background: linear-gradient(135deg, rgba(248, 81, 73, 0.2) 0%, rgba(210, 153, 34, 0.15) 100%);
+      border: 1px solid rgba(248, 81, 73, 0.6);
+    }
+
+    .sim-result-safe {
+      background: linear-gradient(135deg, rgba(63, 185, 80, 0.15) 0%, rgba(56, 139, 253, 0.1) 100%);
+      border: 1px solid rgba(63, 185, 80, 0.5);
+    }
+
+    .sim-result-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .sim-result-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 12px;
+      border-radius: var(--radius-sm);
+    }
+
+    .sim-result-metric-label {
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    .sim-result-metric-val {
+      font-size: 15px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      margin-top: 2px;
+    }
+
+    .sim-advice {
+      font-size: 13px;
+      line-height: 1.6;
+      padding-top: 10px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.15);
+    }
+
+    /* Filter Buttons */
+    .filter-group {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .filter-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-default);
+      color: var(--text-secondary);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .filter-btn:hover {
+      background: var(--bg-card-hover);
+      color: var(--text-primary);
+    }
+
+    .filter-btn.active {
+      background: var(--color-primary);
+      color: #ffffff;
+      border-color: var(--color-primary);
+    }
+
+    .btn-micro {
+      font-size: 11px;
+      padding: 2px 8px;
+      margin-left: 6px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      color: var(--color-primary);
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.15s ease;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    .btn-micro:hover {
+      background: var(--border-subtle);
+      border-color: var(--color-primary);
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border-default);
+      margin-top: 60px;
+      padding: 30px 0;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 10px;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+    }
+
+    .footer-links a:hover {
+      color: var(--color-primary);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Header -->
+  <header>
+    <div class="container header-inner">
+      <div class="brand">
+        <span class="brand-logo">🧭</span>
+        <div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="brand-title">ETHAN-HOLD 仓位罗盘</span>
+            <span class="badge badge-primary">v1.0.0 离线版</span>
+            <span class="badge badge-neutral">零 CDN 依赖</span>
+          </div>
+          <div class="brand-subtitle">底层资产穿透合并 · 硬顶熔断防冲动风控系统</div>
+        </div>
+      </div>
+      <div style="text-align: right;">
+        <span class="badge badge-danger" id="header-status-badge">🔴 触发一级硬顶熔断</span>
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;" id="header-date">
+          基准验证集 · 25只基金组合
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- Circuit Breaker Status Banner -->
+    <div class="circuit-banner" id="circuit-breaker-banner">
+      <div class="banner-left">
+        <div class="banner-icon">🛑</div>
+        <div>
+          <div class="banner-title">
+            <span>🔴 一级硬顶熔断已激活 (CRITICAL BREAKER)</span>
+            <span class="badge badge-danger">严重超标</span>
+          </div>
+          <div class="banner-desc" id="banner-description">
+            泛科技宏观真实穿透敞口已达 <strong class="num" id="banner-tech-pct">65.56%</strong>（突破 50.0% 硬顶限制线 <strong class="num" id="banner-tech-excess">+15.56%</strong>），总体浮亏处于 <strong class="num" id="banner-pnl-rate">-13.00%</strong> 承压区间。系统已强制拦截并冻结泛科技及芯片标的新增买入。
+          </div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div class="banner-timer">
+          <span>⏳ 强制冷静期:</span>
+          <span id="countdown-clock">47:59:58</span>
+        </div>
+        <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="switchTab('tab-circuit')">
+          查看处置方案 ➔
+        </button>
+      </div>
+    </div>
+
+    <!-- Executive KPI Grid -->
+    <div class="kpi-grid">
+      <div class="card">
+        <div class="card-label">
+          <span>组合投入总本金</span>
+          <span>💼</span>
+        </div>
+        <div class="card-value num" id="kpi-total-cost">¥100,000.00</div>
+        <div class="card-footer">
+          <span>构建基准：25 只基金实测盘</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">
+          <span>当前持仓总市值</span>
+          <span>📈</span>
+        </div>
+        <div class="card-value num" id="kpi-total-value">¥87,000.00</div>
+        <div class="card-footer">
+          <span>净现值穿透评估</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">
+          <span>累计浮动盈亏额 / 收益率</span>
+          <span>📉</span>
+        </div>
+        <div class="card-value num val-danger" id="kpi-total-pnl">-¥13,000.00 (-13.00%)</div>
+        <div class="card-footer">
+          <span class="badge badge-danger" id="kpi-pnl-badge">重度承压</span>
+          <span>主要受 A 股芯片与纳指回调拖累</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">
+          <span>泛科技真实穿透敞口</span>
+          <span>⚡</span>
+        </div>
+        <div class="card-value num val-danger" id="kpi-tech-exposure">65.56%</div>
+        <div class="card-footer">
+          <span class="badge badge-danger">超标 +15.56%</span>
+          <span>硬顶上限: 50.00%</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">
+          <span>并联同质化纳指 QDII</span>
+          <span>🧬</span>
+        </div>
+        <div class="card-value num val-warning" id="kpi-clones-count">8 只并联 (¥31,400.00)</div>
+        <div class="card-footer">
+          <span class="badge badge-warning">冗余度 RI 0.88</span>
+          <span>假分散高重叠</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('tab-overview', this)">
+        <span>📊</span> 资产总览 (Overview)
+      </button>
+      <button class="tab-btn" onclick="switchTab('tab-holdings', this)">
+        <span>🔍</span> 穿透底层个股 (Top 15)
+      </button>
+      <button class="tab-btn" onclick="switchTab('tab-sectors', this)">
+        <span>🌐</span> 行业与宏观敞口 (Sectors)
+      </button>
+      <button class="tab-btn" onclick="switchTab('tab-circuit', this)">
+        <span>🛑</span> 熔断拦截中心 (Circuit Breaker)
+      </button>
+      <button class="tab-btn" onclick="switchTab('tab-funds', this)">
+        <span>📋</span> 原始基金清单 (All 25 Funds)
+      </button>
+    </div>
+
+    <!-- TAB 1: 资产总览 -->
+    <div id="tab-overview" class="tab-content active">
+      <div class="grid-2" style="margin-bottom: 24px;">
+        <!-- Left: Diagnostic Summary -->
+        <div class="card">
+          <div class="section-head">
+            <div>
+              <div class="section-title"><span>🎯</span> 散户典型假分散痛点穿透诊断</div>
+              <div class="section-desc">穿透底层前十大重仓股票矩阵与行业相关性</div>
+            </div>
+            <span class="badge badge-danger">深度失衡</span>
+          </div>
+
+          <div style="font-size: 13px; line-height: 1.8; color: var(--text-primary);">
+            <p style="margin-bottom: 12px;">
+              ⚠️ <strong>表面分散，底层重度单押</strong>：账户中虽然持有 <strong>25 只基金</strong>，看似横跨多个基金公司与主题，但实则因为单日限额并联买入了 <strong>8 只纳斯达克 100 指数基金</strong>，叠加 <strong>4 只 A 股半导体芯片基金</strong>。
+            </p>
+            <p style="margin-bottom: 12px;">
+              🔍 <strong>真实暴露惊人一致</strong>：穿透后，美股科技芯片（NVDA, AAPL, MSFT）与 A 股半导体设备/代工（北方华创, 中芯国际, 海光信息）占据绝对统治地位。<strong>泛科技宏观敞口高达 65.56%</strong>，单一周期板块风险极度集聚。
+            </p>
+            <p>
+              🛡️ <strong>防御资产形同虚设</strong>：纯债流动性资产仅占 <strong>1.17%</strong>（¥1,020.00），远低于安全红线 15.0%，在科技板块剧烈回调时完全失去减震缓冲能力。
+            </p>
+          </div>
+        </div>
+
+        <!-- Right: Hard-Cap Gauges -->
+        <div class="card">
+          <div class="section-head">
+            <div>
+              <div class="section-title"><span>📏</span> 核心风控硬顶阈值监控</div>
+              <div class="section-desc">实时监控四大维度的资金敞口与警戒红线</div>
+            </div>
+          </div>
+
+          <!-- Gauge 1: Macro Tech -->
+          <div class="cap-bar-group">
+            <div class="cap-bar-header">
+              <span>泛科技宏观大类总敞口</span>
+              <span>
+                <strong class="num val-danger" id="gauge-macro-val">65.56%</strong> / 50.0% 硬顶
+                <span class="badge badge-danger" style="margin-left: 6px;">🔴 击穿硬顶</span>
+              </span>
+            </div>
+            <div class="cap-bar-track">
+              <div class="cap-bar-threshold" style="left: 50%;">
+                <span class="cap-bar-threshold-label">50% 红线</span>
+              </div>
+              <div class="cap-bar-fill" id="gauge-macro-bar" style="width: 65.56%; background: linear-gradient(90deg, #d29922, #f85149);"></div>
+            </div>
+          </div>
+
+          <!-- Gauge 2: US Tech (NDX Clones) -->
+          <div class="cap-bar-group">
+            <div class="cap-bar-header">
+              <span>海外美股科技 (8只QDII并联)</span>
+              <span>
+                <strong class="num val-warning" id="gauge-us-val">36.09%</strong> / 30.0% 细分硬顶
+                <span class="badge badge-warning" style="margin-left: 6px;">🟡 超配预警</span>
+              </span>
+            </div>
+            <div class="cap-bar-track">
+              <div class="cap-bar-threshold" style="left: 30%;">
+                <span class="cap-bar-threshold-label">30% 细分上限</span>
+              </div>
+              <div class="cap-bar-fill" id="gauge-us-bar" style="width: 36.09%; background: linear-gradient(90deg, #388bfd, #d29922);"></div>
+            </div>
+          </div>
+
+          <!-- Gauge 3: A-Share Semiconductor -->
+          <div class="cap-bar-group">
+            <div class="cap-bar-header">
+              <span>A股半导体与制造集群 (4只芯片)</span>
+              <span>
+                <strong class="num" id="gauge-semi-val">29.47%</strong> / 30.0% 细分上限
+                <span class="badge badge-warning" style="margin-left: 6px;">逼近上限</span>
+              </span>
+            </div>
+            <div class="cap-bar-track">
+              <div class="cap-bar-threshold" style="left: 30%;">
+                <span class="cap-bar-threshold-label">30% 细分上限</span>
+              </div>
+              <div class="cap-bar-fill" id="gauge-semi-bar" style="width: 29.47%; background: linear-gradient(90deg, #bc8cff, #f85149);"></div>
+            </div>
+          </div>
+
+          <!-- Gauge 4: Defensive Baseline -->
+          <div class="cap-bar-group">
+            <div class="cap-bar-header">
+              <span>纯债与现金防御垫底线</span>
+              <span>
+                <strong class="num val-danger" id="gauge-def-val">1.17%</strong> / 15.0% 最低安全线
+                <span class="badge badge-danger" style="margin-left: 6px;">严重不足</span>
+              </span>
+            </div>
+            <div class="cap-bar-track">
+              <div class="cap-bar-threshold" style="left: 15%;">
+                <span class="cap-bar-threshold-label">15% 底线</span>
+              </div>
+              <div class="cap-bar-fill" id="gauge-def-bar" style="width: 1.17%; background: #3fb950;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 四大核心重仓深度透视：宏观背景、波动预测与应对建议 (Core Holdings Macro Insight & Forecast) -->
+      <div class="card" style="margin-bottom: 24px; border-left: 4px solid var(--color-cyan);">
+        <div class="section-head">
+          <div>
+            <div class="section-title"><span>🌐</span> 高占比核心重仓深度透视：社会宏观背景、未来波动预测与实操建议</div>
+            <div class="section-desc">穿透持仓占比最高的前四大主力标的（累计占比 66.9%），结合最新社会背景、宏观周期与实盘动向做定点穿透</div>
+          </div>
+          <span class="badge badge-success" style="font-weight: 700;">四大核心持仓 (合计 66.9%)</span>
+        </div>
+
+        <div class="grid-2" style="margin-top: 14px; gap: 16px;">
+          <!-- 标的 1: 建信上海金ETF联接C -->
+          <div style="background: var(--bg-subtle); padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--border-default); display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                <div>
+                  <span style="font-weight: 700; color: var(--text-primary); font-size: 15px;">🥇 建信上海金 ETF 联接 C (001000)</span>
+                  <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">底层挂钩：上海黄金交易所黄金现货实盘合约 (AU99.99)</div>
+                </div>
+                <div style="text-align: right;">
+                  <span class="badge badge-success" style="font-size: 13px; font-weight: 700;">占比 24.13%</span>
+                  <div style="font-size: 12px; font-weight: 600; color: var(--color-success); margin-top: 2px;">¥4,920.02 (+2.91%)</div>
+                </div>
+              </div>
+
+              <div style="font-size: 13px; color: var(--text-primary); line-height: 1.7;">
+                <div style="margin-bottom: 8px;">
+                  <strong style="color: var(--color-primary);">🏛️ 宏观与社会知识背景透视：</strong><br>
+                  1. <strong>去美元化与全球央行购金长周期：</strong> 地缘摩擦常态化（中东冲突、俄乌战事及主权外汇储备安全反思），中国、土耳其、波兰等央行连续数季度净增持实体黄金作为去中心化非主权硬通货储备。<br>
+                  2. <strong>降息周期实际利率下行：</strong> 美联储开启降息周期，持有无息黄金的机会成本实质性下降；国内居民端在存款利率破 1.5% 与“资产荒”背景下掀起黄金定投热。
+                </div>
+                <div style="margin-bottom: 8px;">
+                  <strong style="color: var(--color-warning);">🔮 未来 1~3 个月潜在波动与风险预测：</strong><br>
+                  短期国际金价处于历史 95% 超买分位数高位。若美国抗通胀数据反复推迟后续降息节奏，或中东局部达成停火协议，黄金将面临阶段性 <strong>5%~10% 的高位剧烈技术回调与多头踩踏</strong>；同时需警惕汇率波动对境内金价的汇兑磨损。
+                </div>
+              </div>
+            </div>
+
+            <div style="background: #ffffff; padding: 10px 12px; border-radius: var(--radius-sm); border-left: 3px solid var(--color-success); margin-top: 8px; font-size: 12px; line-height: 1.6;">
+              <strong style="color: var(--color-success);">💡 投资实操应对建议：</strong><br>
+              ● <strong>严禁追高加仓：</strong> 24.1% 占比已达组合第一大重仓防守极限量，切忌在自媒体“黄金暴涨”热度下继续追单；<br>
+              ● <strong>倒金字塔阶梯止盈：</strong> 若金价继续冲高导致占比突破 28%，每上涨 5% 赎回 20% 的浮盈份额，将利润再平衡至红利低波或纯债；底仓 20% 坚定锁死作为极端黑天鹅对冲盾牌。
+            </div>
+          </div>
+
+          <!-- 标的 2: 纳指 100 并联集群 -->
+          <div style="background: var(--bg-subtle); padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--border-default); display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                <div>
+                  <span style="font-weight: 700; color: var(--text-primary); font-size: 15px;">🇺🇸 纳指 100 并联集群 (CLONE_QDII_NDX100)</span>
+                  <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">包含：广发/万家/华安A/南方/华安C/景顺长城 6只影子基金</div>
+                </div>
+                <div style="text-align: right;">
+                  <span class="badge badge-warning" style="font-size: 13px; font-weight: 700;">占比 15.59%</span>
+                  <div style="font-size: 12px; font-weight: 600; color: var(--color-danger); margin-top: 2px;">¥3,177.60 (-3.12%)</div>
+                </div>
+              </div>
+
+              <div style="font-size: 13px; color: var(--text-primary); line-height: 1.7;">
+                <div style="margin-bottom: 8px;">
+                  <strong style="color: var(--color-primary);">🏛️ 宏观与社会知识背景透视：</strong><br>
+                  1. <strong>生成式 AI 算力军备竞赛：</strong> 英伟达 Blackwell 架构量产交付与大模型推理爆发，北美云巨头（微软/Meta/亚马逊/谷歌）每年数百亿美元 CAPEX 资本开支持续支撑核心巨头业绩。<br>
+                  2. <strong>QDII 外汇限购催生并联怪相：</strong> 外汇额度紧俏致使单日限购 100~500 元，投资者为建仓被迫并联开立多只跟踪相同指数的代码，造成“假分散”并推高交易摩擦费。
+                </div>
+                <div style="margin-bottom: 8px;">
+                  <strong style="color: var(--color-warning);">🔮 未来 1~3 个月潜在波动与风险预测：</strong><br>
+                  纳指估值处于 32~35 倍历史高位，市场对巨头季报容错率极低；若 10 年期美债收益率反弹至 4.5% 或 AI 商业化节奏不及预期，板块容易发生 <strong>8%~15% 的高波动快速回撤</strong>；同时需警惕半导体出口管制加码对供应链的情绪冲击。
+                </div>
+              </div>
+            </div>
+
+            <div style="background: #ffffff; padding: 10px 12px; border-radius: var(--radius-sm); border-left: 3px solid var(--color-warning); margin-top: 8px; font-size: 12px; line-height: 1.6;">
+              <strong style="color: var(--color-warning);">💡 投资实操应对建议：</strong><br>
+              ● <strong>严守 50% 泛科技硬顶：</strong> 当前泛科技总敞口 33.47%，纳指占 15.6%，处于合规红线内，切忌盲目再追；<br>
+              ● <strong>停止并联新开，逐步归集：</strong> 坚决不新开第 7 只影子基金；待大额限购放宽时，向管理费最低的广发纳指单只归并；<br>
+              ● <strong>仅在关键均线支撑位网格定投：</strong> 杜绝在单日大阳线追涨，仅在板块回撤 8% 以上分批挂单。
+            </div>
+          </div>
+
+          <!-- 标的 3: 华泰柏瑞中证红利低波动ETF联接C -->
+          <div style="background: var(--bg-subtle); padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--border-default); display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                <div>
+                  <span style="font-weight: 700; color: var(--text-primary); font-size: 15px;">🛡️ 华泰柏瑞中证红利低波动 ETF 联接 C (001001)</span>
+                  <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">底层穿透：中国神华、陕西煤业、工商银行、大秦铁路等高股息央国企</div>
+                </div>
+                <div style="text-align: right;">
+                  <span class="badge badge-success" style="font-size: 13px; font-weight: 700;">占比 15.06%</span>
+                  <div style="font-size: 12px; font-weight: 600; color: var(--color-success); margin-top: 2px;">¥3,069.32 (+5.23%)</div>
+                </div>
+              </div>
+
+              <div style="font-size: 13px; color: var(--text-primary); line-height: 1.7;">
+                <div style="margin-bottom: 8px;">
+                  <strong style="color: var(--color-primary);">🏛️ 宏观与社会知识背景透视：</strong><br>
+                  1. <strong>新“国九条”资本市场重塑红利生态：</strong> 监管层严格约束上市公司分红并全面强化央国企市值管理考核，大秦铁路、神华等现金奶牛分红意愿与可持续性创历史新高。<br>
+                  2. <strong>低利率时代险资“资产荒”刚需：</strong> 长期国债收益率跌破 2.2%，理财刚兑打破，具备 4%~6% 股息率且现金流健康的红利资产成为长线机构不可替代的底仓配置。
+                </div>
+                <div style="margin-bottom: 8px;">
+                  <strong style="color: var(--color-warning);">🔮 未来 1~3 个月潜在波动与风险预测：</strong><br>
+                  β 波动率仅为成长股 1/2，下行抗跌极佳（预期最大回撤通常 < 5%）；但在顺周期政策强刺激或牛市情绪亢奋期，资金可能从红利流向高弹性科技成长股，面临<strong>“风格轮动式短期跑输”</strong>；煤炭价格波动对资源股息有轻微扰动。
+                </div>
+              </div>
+            </div>
+
+            <div style="background: #ffffff; padding: 10px 12px; border-radius: var(--radius-sm); border-left: 3px solid var(--color-success); margin-top: 8px; font-size: 12px; line-height: 1.6;">
+              <strong style="color: var(--color-success);">💡 投资实操应对建议：</strong><br>
+              ● <strong>作为“定盘星”长期持有：</strong> 15.1% 占比极具战略价值，是账户中持续产生正收益的现金流盾牌；<br>
+              ● <strong>红利分红再投资：</strong> 开启分红再投模式，利用复利滚动累积份额；<br>
+              ● <strong>逢市场疯炒成长、红利回调时逆势增配：</strong> 当资金追捧科技泡沫导致红利低波承压时，正是逢低捡起便宜高股息筹码的良机。
+            </div>
+          </div>
+
+          <!-- 标的 4: 融通稳信增益6个月持有期混合C -->
+          <div style="background: var(--bg-subtle); padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--border-default); display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                <div>
+                  <span style="font-weight: 700; color: var(--text-primary); font-size: 15px;">⚠️ 融通稳信增益 6 个月持有期混合 C (012525)</span>
+                  <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">名义分类：稳健类/固收+ | 实际状态：高回撤瑕疵资产 (锁定持有期)</div>
+                </div>
+                <div style="text-align: right;">
+                  <span class="badge badge-danger" style="font-size: 13px; font-weight: 700;">占比 12.11%</span>
+                  <div style="font-size: 12px; font-weight: 600; color: var(--color-danger); margin-top: 2px;">¥2,468.02 (-15.43%)</div>
+                </div>
+              </div>
+
+              <div style="font-size: 13px; color: var(--text-primary); line-height: 1.7;">
+                <div style="margin-bottom: 8px;">
+                  <strong style="color: var(--color-primary);">🏛️ 宏观与社会知识背景透视：</strong><br>
+                  1. <strong>“固收+”变“固收-”的行业通病：</strong> 运作中过度配置了高波动的权益仓位、可转债微盘股或弱资质信用债，在行情动荡中发生非对称亏损，严重违背理财替代初衷。<br>
+                  2. <strong>6 个月持有期锁仓与心理处置陷阱：</strong> 锁定期内不可赎回剥夺了投资者的止损选择权，容易让基民陷入“亏了近 15% 不回本绝不卖”的赌徒沉没成本心理。
+                </div>
+                <div style="margin-bottom: 8px;">
+                  <strong style="color: var(--color-warning);">🔮 未来 1~3 个月潜在波动与风险预测：</strong><br>
+                  净值修复极其缓慢，跟随大盘温和反弹空间预计仅 2%~5%；若转债信用利差走阔或量化中性端波动，面临<strong>净值二次下探与长期跑输纯债基准</strong>风险，继续消耗时间与机会成本。
+                </div>
+              </div>
+            </div>
+
+            <div style="background: #ffffff; padding: 10px 12px; border-radius: var(--radius-sm); border-left: 3px solid var(--color-danger); margin-top: 8px; font-size: 12px; line-height: 1.6;">
+              <strong style="color: var(--color-danger);">💡 投资实操应对建议：</strong><br>
+              ● <strong>绝对硬顶冷冻，严禁追加一分钱：</strong> 坚决不向“假固收+”补仓摊薄成本，拒绝往瑕疵资产填入优质流动性；<br>
+              ● <strong>锁定期满“断舍离”置换为真纯债：</strong> 6个月持有期解锁后，待净值随反弹修复至 -8%~-10% 左右，分批赎回并将资金置换为真正的中短债纯债（如天弘同利），彻底清洗不良资产并重建真正的防守安全垫。
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 投资大师诊断处方与实操调仓指南 (Prescriptions & Action Plan) -->
+      <div class="card" style="margin-bottom: 24px; border-left: 4px solid var(--color-primary);">
+        <div class="section-head">
+          <div>
+            <div class="section-title"><span>🩺</span> 投资大师诊断处方与实操调仓指南 (Actionable Prescriptions)</div>
+            <div class="section-desc">拒绝只看病不给药方：基于底层穿透与硬顶规则，为你的组合量身定制的临床调仓减负方案</div>
+          </div>
+          <span class="badge badge-primary">四维临床处方</span>
+        </div>
+
+        <div class="grid-2" style="margin-top: 14px; gap: 16px;">
+          <!-- 处方 1: 重度浮亏断舍离 -->
+          <div style="background: var(--bg-subtle); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-default);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+              <span style="font-weight: 700; color: var(--color-danger); font-size: 14px;">🚨 处方 1：重度浮亏小碎仓（-30%~-52%）急救止血</span>
+              <span class="badge badge-danger">立刻止血</span>
+            </div>
+            <div style="font-size: 13px; color: var(--text-primary); line-height: 1.6;">
+              <strong>诊断现象：</strong> 财通成长优选(-52%)、前海开源乐享生活(-40.7%)、华夏全球科技(-39.8%)、华夏创新前沿(-39.3%)等 7 只基金跌幅极深，但单只仅几十到几百元，合计仅约 ¥2,000。<br>
+              <strong>实操动作：</strong>
+              <ul style="padding-left: 18px; margin-top: 4px; color: var(--text-secondary);">
+                <li><strong>坚决停止加仓：</strong> 彻底关闭这些基金的定投，切忌以“拉低成本”为由继续注血。</li>
+                <li><strong>借反弹断舍离：</strong> 这些碎仓已失去扭亏杠杆意义，却严重消耗心智。借由后续市场脉冲反弹，分批清仓赎回，资金归集至大盘核心宽基。</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- 处方 2: 并联纳指锁仓归集 -->
+          <div style="background: var(--bg-subtle); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-default);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+              <span style="font-weight: 700; color: var(--color-warning); font-size: 14px;">🧬 处方 2：6 只并联纳指影子军团归集方案</span>
+              <span class="badge badge-warning">锁仓不增</span>
+            </div>
+            <div style="font-size: 13px; color: var(--text-primary); line-height: 1.6;">
+              <strong>诊断现象：</strong> 广发(1199元)、万家(540元)、华安(364元)、南方(279元)等 6 只纳指联接占用 ¥3,177.60 (15.6%)，同质化严重。<br>
+              <strong>实操动作：</strong>
+              <ul style="padding-left: 18px; margin-top: 4px; color: var(--text-secondary);">
+                <li><strong>严禁新开代码：</strong> 15.6% 的美股科技仓位在 2 万总资产中处于合理区间，无需惊慌割肉，但切忌因限购新开第 7、第 8 只代码。</li>
+                <li><strong>单点龙头定投：</strong> 后续若遇大跌定投，只固定在费率最低、规模最大的广发纳指(270042)上一只定投；小额影子仓到期逐步归集合并。</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- 处方 3: 防守装甲单向补血 -->
+          <div style="background: var(--bg-subtle); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-default);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+              <span style="font-weight: 700; color: var(--color-primary); font-size: 14px;">🛡️ 处方 3：增量资金单向补血纯债与流动性</span>
+              <span class="badge badge-primary">建立护城河</span>
+            </div>
+            <div style="font-size: 13px; color: var(--text-primary); line-height: 1.6;">
+              <strong>诊断现象：</strong> 组合缺乏纯债与货币安全垫（仅靠高波动的黄金充当防守），缺乏回撤缓冲屏障。<br>
+              <strong>实操动作：</strong>
+              <ul style="padding-left: 18px; margin-top: 4px; color: var(--text-secondary);">
+                <li><strong>未来 3 个月资金单向分流：</strong> 每月结余增量资金（如 1000~2000 元）100% 配置于中短债纯债或同业存单指数基金。</li>
+                <li><strong>目标防守比例 20%：</strong> 将低风险安全垫充实至 ¥4,000 以上，为后续权益大跌提供从容再平衡的弹药。</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- 处方 4: 黄金高抛倒金字塔止盈 -->
+          <div style="background: var(--bg-subtle); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-default);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+              <span style="font-weight: 700; color: var(--color-success); font-size: 14px;">💰 处方 4：黄金盈利大头（¥4,920）倒金字塔止盈</span>
+              <span class="badge badge-success">收益锁定</span>
+            </div>
+            <div style="font-size: 13px; color: var(--text-primary); line-height: 1.6;">
+              <strong>诊断现象：</strong> 建信上海金ETF联接C独占 ¥4,920.02 (24.1%)，浮盈可观，单一商品暴露已逼近上限。<br>
+              <strong>实操动作：</strong>
+              <ul style="padding-left: 18px; margin-top: 4px; color: var(--text-secondary);">
+                <li><strong>梯级锁定利润：</strong> 若国际金价继续冲高突破历史阻力位，每上涨 5% 赎回 20% 的持仓利润。</li>
+                <li><strong>利润再平衡：</strong> 将落袋为安的真金白银再平衡至估值低位的核心宽基（如红利低波或沪深300），实现机构级高抛低吸。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Action Jump Cards -->
+      <div class="grid-2">
+        <div class="card" style="border-left: 4px solid var(--color-primary); cursor: pointer;" onclick="switchTab('tab-circuit')">
+          <div style="font-weight: 700; font-size: 15px; margin-bottom: 4px; color: var(--color-primary);">
+            ⚡ 买入前硬顶模拟试算器 (Pre-Trade Simulator)
+          </div>
+          <div style="font-size: 12px; color: var(--text-secondary);">
+            拟买入新标的前，先进行组合穿透动态试算，检验是否会进一步推高超标敞口或触发防冲动拦截 ➔
+          </div>
+        </div>
+        <div class="card" style="border-left: 4px solid var(--color-warning); cursor: pointer;" onclick="switchTab('tab-holdings')">
+          <div style="font-weight: 700; font-size: 15px; margin-bottom: 4px; color: var(--color-warning);">
+            🔎 查看 Top 15 底层穿透个股聚合明细
+          </div>
+          <div style="font-size: 12px; color: var(--text-secondary);">
+            透视 NVDA (¥2,763.20)、北方华创 (¥1,884.10) 在哪些基金中被反复隐蔽持有 ➔
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: 穿透底层个股 -->
+    <div id="tab-holdings" class="tab-content">
+      <div class="card" style="margin-bottom: 24px;">
+        <div class="section-head">
+          <div>
+            <div class="section-title"><span>📊</span> 穿透合并后 Top 15 核心底层资产分布图 (Native SVG Horizontal Bars)</div>
+            <div class="section-desc">通过基金前十大重仓穿透相乘与跨基金加总计算真实有效穿透权重与市值</div>
+          </div>
+          <span class="badge badge-primary">穿透权重累计: 27.87%</span>
+        </div>
+
+        <!-- Horizontal Bar Container -->
+        <div id="top-holdings-bar-list" style="margin-top: 14px;">
+          <!-- Dynamically populated via JS from PORTFOLIO_DATA -->
+        </div>
+      </div>
+
+      <!-- Top Holdings Table -->
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 60px; text-align: center;">排名</th>
+              <th>底层标的代码 / 名称</th>
+              <th>交易市场</th>
+              <th>核心所属赛道</th>
+              <th style="text-align: right;">穿透合并市值</th>
+              <th style="text-align: right;">组合总净值占比</th>
+              <th style="text-align: center;">关联基金数</th>
+              <th>核心持仓贡献来源基金</th>
+            </tr>
+          </thead>
+          <tbody id="top-holdings-tbody">
+            <!-- Populated via JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 3: 行业与宏观敞口 -->
+    <div id="tab-sectors" class="tab-content">
+      <div class="grid-2" style="margin-bottom: 24px;">
+        <!-- Left: Native SVG Donut Chart -->
+        <div class="card">
+          <div class="section-head">
+            <div>
+              <div class="section-title"><span>🍩</span> 资产大类与行业穿透环形图 (Native SVG Donut)</div>
+              <div class="section-desc">将鼠标悬停在扇区上可实时查看行业穿透详情</div>
+            </div>
+          </div>
+
+          <div class="svg-chart-container" style="min-height: 380px;">
+            <svg id="donut-svg" width="360" height="360" viewBox="0 0 360 360">
+              <!-- Slices dynamically rendered by JavaScript -->
+              <g id="donut-slices-group"></g>
+              <!-- Center Readout -->
+              <circle cx="180" cy="180" r="85" fill="#ffffff" stroke="#d0d7de" stroke-width="1"></circle>
+              <text id="donut-center-title" x="180" y="165" class="donut-center-text" fill="#57606a" font-size="12">泛科技大类总敞口</text>
+              <text id="donut-center-val" x="180" y="195" class="donut-center-text num" fill="#cf222e" font-size="22" font-weight="700">65.56%</text>
+              <text id="donut-center-sub" x="180" y="218" class="donut-center-text" fill="#cf222e" font-size="11">🔴 击穿 50% 硬顶</text>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Right: Sector Exposure List -->
+        <div class="card">
+          <div class="section-head">
+            <div>
+              <div class="section-title"><span>📋</span> 全组合行业板块敞口列表</div>
+              <div class="section-desc">对照三级硬顶限额标准</div>
+            </div>
+            <span class="badge badge-danger">泛科技合计: 65.56%</span>
+          </div>
+
+          <div id="sector-exposure-list" style="display: flex; flex-direction: column; gap: 10px; max-height: 420px; overflow-y: auto; padding-right: 6px;">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Currency & Macro Breakdown -->
+      <div class="card">
+        <div class="section-head">
+          <div class="section-title"><span>💱</span> 宏观地域与货币敞口分布</div>
+        </div>
+        <div class="grid-2">
+          <div style="background: var(--bg-subtle); padding: 16px; border-radius: var(--radius-sm);">
+            <div style="font-weight: 700; margin-bottom: 6px; display: flex; justify-content: space-between;">
+              <span>海外美股与美元资产 (USD Exposure)</span>
+              <span class="num val-primary">36.09% (¥31,400.00)</span>
+            </div>
+            <div style="font-size: 12px; color: var(--text-secondary);">
+              全部来自于 8 只并联纳斯达克 100 QDII 基金。受美联储利率政策与汇率波动双重影响。
+            </div>
+          </div>
+          <div style="background: var(--bg-subtle); padding: 16px; border-radius: var(--radius-sm);">
+            <div style="font-weight: 700; margin-bottom: 6px; display: flex; justify-content: space-between;">
+              <span>国内 A 股及港股资产 (CNY Exposure)</span>
+              <span class="num val-danger">63.91% (¥55,600.00)</span>
+            </div>
+            <div style="font-size: 12px; color: var(--text-secondary);">
+              以半导体芯片制造 (29.47%)、医药健康 (6.17%)、核心蓝筹 (5.79%) 及黄金/银行等为主。
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: 熔断拦截中心 & 模拟试算器 -->
+    <div id="tab-circuit" class="tab-content">
+      <!-- Active Circuit Breakers List -->
+      <div class="card" style="margin-bottom: 24px; border-left: 4px solid var(--color-danger);">
+        <div class="section-head">
+          <div>
+            <div class="section-title"><span class="val-danger">🛑</span> 当前触发的风控硬顶与拦截项 (Active Interceptions)</div>
+            <div class="section-desc">机构级交易否决机制：防止非理性冲动追跌与虚假分散</div>
+          </div>
+          <span class="badge badge-danger">三级风控全景</span>
+        </div>
+
+        <div id="breaker-alerts-list" style="display: flex; flex-direction: column; gap: 14px;">
+          <!-- Active alerts rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- Pre-Trade Simulator Box -->
+      <div class="sim-box">
+        <div class="sim-header">
+          <div>
+            <div class="sim-title">
+              <span>⚡</span> 互动风控沙盒：【买入前硬顶模拟试算器】
+            </div>
+            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">
+              模拟真实交易场景：在下单买入前试算组合穿透敞口变化，严格防范“越跌越买”的冲动补仓！
+            </div>
+          </div>
+          <span class="badge badge-primary">实盘拟合引擎</span>
+        </div>
+
+        <div class="quick-presets" id="quick-presets-container">
+          <span style="font-size: 12px; color: var(--text-muted); align-self: center;">快捷模拟场景:</span>
+          <button class="preset-chip" onclick="applyPreset('320007', 5000)">🔴 加仓 诺安成长混合 ¥5,000 (浮亏 -23%)</button>
+          <button class="preset-chip" onclick="applyPreset('000055', 3000)">🟠 加仓 广发纳指100联接 ¥3,000 (浮亏 -10%)</button>
+          <button class="preset-chip" onclick="applyPreset('000198', 10000)">🟢 加仓 天弘同利纯债 ¥10,000 (稀释科技风险)</button>
+          <button class="preset-chip" onclick="applyPreset('001595', 5000)">🟢 加仓 富国银行高股息 ¥5,000 (提升红利防御)</button>
+        </div>
+
+        <form class="sim-form" onsubmit="event.preventDefault(); runSimulation();">
+          <div class="form-group">
+            <label class="form-label">拟加仓目标标的 (Select Target Fund / Asset)</label>
+            <select id="sim-fund-select" class="form-control">
+              <!-- Dynamically populated with all funds -->
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">拟买入金额 (¥ CNY)</label>
+            <input type="number" id="sim-amount-input" class="form-control num" value="5000" min="100" step="100" required>
+          </div>
+
+          <div class="form-group" style="justify-content: flex-end;">
+            <button type="submit" class="btn" style="height: 42px;">
+              <span>🚀</span> 提交买入风控预检
+            </button>
+          </div>
+        </form>
+
+        <!-- Dynamic Simulation Output Card -->
+        <div id="sim-result-card" class="sim-result-card">
+          <div class="sim-result-header" id="sim-result-header">
+            <!-- Intercept / Approved title -->
+          </div>
+
+          <div class="sim-result-grid">
+            <div>
+              <div class="sim-result-metric-label">标的当前盈亏状态</div>
+              <div class="sim-result-metric-val" id="sim-m-pnl">--</div>
+            </div>
+            <div>
+              <div class="sim-result-metric-label">当前泛科技敞口</div>
+              <div class="sim-result-metric-val" id="sim-m-curr-tech">65.56%</div>
+            </div>
+            <div>
+              <div class="sim-result-metric-label">模拟加仓后科技敞口</div>
+              <div class="sim-result-metric-val" id="sim-m-new-tech">--</div>
+            </div>
+            <div>
+              <div class="sim-result-metric-label">硬顶风控决策</div>
+              <div class="sim-result-metric-val" id="sim-m-decision">--</div>
+            </div>
+          </div>
+
+          <div class="sim-advice" id="sim-result-advice">
+            <!-- Advice & Rational rebalance plan -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: 原始基金清单 -->
+    <div id="tab-funds" class="tab-content">
+      <!-- Sheet Core Holdings Macro & Social Knowledge Declaration -->
+      <div class="card" style="margin-bottom: 20px; background: var(--bg-subtle); border-left: 4px solid var(--color-primary);">
+        <div class="section-head">
+          <div>
+            <div class="section-title"><span>🌐</span> Sheet 声明指示：核心高占比重仓宏观背景透视与 1~3 个月波动前瞻</div>
+            <div class="section-desc">在原始持仓明细表中显式声明占比最高的核心资产（累计占比达 66.9%），结合最新社会背景、宏观周期给出前瞻预测与实操应对建议</div>
+          </div>
+          <span class="badge badge-success" style="font-weight: 700;">四大主力 (合占 66.9%)</span>
+        </div>
+
+        <div class="grid-2" style="margin-top: 14px; gap: 14px;">
+          <div style="background: #ffffff; padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-default);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-weight: 700; color: var(--text-primary); font-size: 13px;">🥇 建信上海金 ETF 联接 C (001000)</span>
+              <span class="badge badge-success">占比 24.13% · 浮盈 +2.91%</span>
+            </div>
+            <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.65;">
+              <strong>🏛️ 社会与宏观背景</strong>：全球央行去美元化购金长周期（地缘摩擦常态化），降息周期实际利率下行，国内低利率资产荒掀起民间黄金定投热。<br>
+              <strong>🔮 1~3 个月波动预测</strong>：国际金价逼近历史 95% 超买分位数高位，防美通胀粘性推迟降息引发 5%~10% 回调与多头踩踏。<br>
+              <strong>💡 实操建议</strong>：严禁追高；占比超 28% 倒金字塔止盈 20% 浮盈再平衡至红利或纯债，底仓 20% 坚决锁死。
+            </div>
+          </div>
+
+          <div style="background: #ffffff; padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-default);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-weight: 700; color: var(--text-primary); font-size: 13px;">🇺🇸 纳指 100 并联集群 (6只影子基金)</span>
+              <span class="badge badge-warning">占比 15.59% · 浮亏 -3.12%</span>
+            </div>
+            <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.65;">
+              <strong>🏛️ 社会与宏观背景</strong>：生成式 AI 算力军备竞赛，英伟达 Blackwell 芯片与北美云巨头百亿 CAPEX 支撑业绩；外汇限额并联 6 只影子基金假分散。<br>
+              <strong>🔮 1~3 个月波动预测</strong>：PE 处 32~35 倍高位，财报容错极低，防 10 年美债利率反弹或商业化不及预期引发 8%~15% 快速回撤。<br>
+              <strong>💡 实操建议</strong>：严守 50% 科技硬顶，坚决不新开第 7 只代码，待大额放宽向广发纳指单只归集；回撤支撑位小额定投。
+            </div>
+          </div>
+
+          <div style="background: #ffffff; padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-default);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-weight: 700; color: var(--text-primary); font-size: 13px;">🛡️ 华泰柏瑞中证红利低波 ETF (001001)</span>
+              <span class="badge badge-success">占比 15.06% · 浮盈 +5.23%</span>
+            </div>
+            <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.65;">
+              <strong>🏛️ 社会与宏观背景</strong>：新“国九条”重塑红利生态，强化分红与市值考核；低利率长债跌破 2.2% 背景下，高股息央国企成险资资产荒刚需底仓。<br>
+              <strong>🔮 1~3 个月波动预测</strong>：β 波动率仅成长股 1/2，下行抗跌极佳（回撤通常 < 5%），但牛市或顺周期强刺激期面临风格轮动跑输。<br>
+              <strong>💡 实操建议</strong>：作为定盘星长期持有，开启分红再投资滚动复利；逢市场狂炒成长、红利回调时逆势增配。
+            </div>
+          </div>
+
+          <div style="background: #ffffff; padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-default);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-weight: 700; color: var(--text-primary); font-size: 13px;">⚠️ 融通稳信增益 6 个月持有 (012525)</span>
+              <span class="badge badge-danger">占比 12.11% · 浮亏 -15.43%</span>
+            </div>
+            <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.65;">
+              <strong>🏛️ 社会与宏观背景</strong>：“固收+”变“固收-”行业通病，过度配置权益可转债发生非对称亏损；6 个月持有期锁仓剥夺止损权，基民深陷赌徒死扛思维。<br>
+              <strong>🔮 1~3 个月波动预测</strong>：净值修复极其缓慢，反弹仅 2%~5%，若信用利差走阔面临二次下探与长期跑输纯债基准风险。<br>
+              <strong>💡 应对建议</strong>：绝对硬顶冷冻，严禁追加一分钱摊薄成本；6 个月解锁后分批赎回，置换为真纯债彻底清洗不良。
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 10px; font-size: 12px; color: var(--text-muted);">
+          💡 <strong>Sheet 联动指引</strong>：在下方明细表中，高占比标的已打上专属风控徽章；点击标的名称旁的【🌐 宏观背景与预测】可展开该标的的详细分析卡片。
+        </div>
+      </div>
+
+      <!-- Clones Highlight Box -->
+      <div class="redundancy-box">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+          <div>
+            <div style="font-size: 15px; font-weight: 700; color: #58a6ff; display: flex; align-items: center; gap: 8px;">
+              <span>🧬</span> 8 只并联纳指 100 基金冗余透视 (Parallel Clones Clustering)
+            </div>
+            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">
+              因各渠道单日 100/500 元外汇额度限购，投资者并联开设了 8 只同质化 QDII。合计占用市值 <strong>¥31,400.00</strong>（占总资产 <strong>36.09%</strong>），累计浮亏 <strong>-¥3,600.00</strong>。
+            </div>
+          </div>
+          <span class="badge badge-warning">冗余度 RI = 0.88</span>
+        </div>
+
+        <div class="redundancy-grid" id="redundancy-clones-grid">
+          <!-- Populated by JS -->
+        </div>
+
+        <div style="margin-top: 12px; font-size: 12px; color: var(--text-muted); border-top: 1px dashed rgba(255, 255, 255, 0.1); padding-top: 8px;">
+          💡 <strong>优化建议</strong>：8 只基金底层 100% 跟踪纳斯达克 100 指数，管理费率相仿（0.50%~0.80%）。建议归并保留 1~2 只规模大、费率低的主流 ETF 联接基金（如广发或华夏），停止其余 6 只并联定投，消除记账杂乱并降低多账户管理负担。
+        </div>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="section-head">
+        <div>
+          <div class="section-title"><span>📋</span> 全量 25 只基金明细表 (25 Funds Portfolio Ledger)</div>
+          <div class="section-desc">包含成本、市值、浮动盈亏、盈亏率及同质化标签</div>
+        </div>
+        <div class="filter-group">
+          <button class="filter-btn active" onclick="filterFunds('ALL', this)">全部 (25)</button>
+          <button class="filter-btn" onclick="filterFunds('QDII', this)">并联纳指 (8)</button>
+          <button class="filter-btn" onclick="filterFunds('SEMI', this)">A股半导体 (4)</button>
+          <button class="filter-btn" onclick="filterFunds('HEALTH', this)">医药与消费 (4)</button>
+          <button class="filter-btn" onclick="filterFunds('DEFENSIVE', this)">固收与防御 (4)</button>
+          <button class="filter-btn" onclick="filterFunds('OTHERS', this)">其他宽基 (5)</button>
+        </div>
+      </div>
+
+      <!-- Full Funds Table -->
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 50px; text-align: center;">#</th>
+              <th>基金代码</th>
+              <th>基金全称</th>
+              <th>资产归类</th>
+              <th>核心所属赛道</th>
+              <th style="text-align: right;">投入本金</th>
+              <th style="text-align: right;">当前市值</th>
+              <th style="text-align: right;">浮动盈亏</th>
+              <th style="text-align: right;">收益率</th>
+              <th style="text-align: right;">组合占比</th>
+              <th style="text-align: center;">风控标识</th>
+            </tr>
+          </thead>
+          <tbody id="funds-table-tbody">
+            <!-- Dynamically populated by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div>🧭 <strong>ETHAN-HOLD 仓位罗盘</strong> · Ethan 个人品牌家族化开源工具系列</div>
+      <div style="margin-top: 4px;">
+        100% 独立纯本地单文件架构 · 零 CDN 外部依赖 · 完全保障金融资产隐私安全
+      </div>
+      <div class="footer-links">
+        <a href="javascript:void(0)" onclick="switchTab('tab-overview')">资产总览</a>
+        <a href="javascript:void(0)" onclick="switchTab('tab-holdings')">穿透个股</a>
+        <a href="javascript:void(0)" onclick="switchTab('tab-sectors')">行业宏观</a>
+        <a href="javascript:void(0)" onclick="switchTab('tab-circuit')">硬顶模拟器</a>
+        <a href="javascript:void(0)" onclick="switchTab('tab-funds')">基金清单</a>
+      </div>
+      <div style="margin-top: 12px; color: var(--text-muted); font-size: 11px;">
+        MIT Open Source License · Designed for Modern Disciplined Investors
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==========================================================================
+       Inlined Embedded JSON Data Placeholder (Sanitized Data Injection)
+       ========================================================================== -->
+  <script id="portfolio-data-script" type="application/json">
+/*__PORTFOLIO_DATA_PLACEHOLDER__*/
+  </script>
+
+  <!-- ==========================================================================
+       Vanilla JavaScript: Standalone Chart Rendering & Simulator Engine
+       ========================================================================== -->
+  <script>
+    // Benchmark 25-fund dataset fallback if placeholder is untouched
+    const DEFAULT_BENCHMARK_DATA = {
+      "portfolio_name": "Ethan-Hold 25只基金经典测试组合",
+      "generated_at": "2026-11-08T03:00:00Z",
+      "portfolio_summary": {
+        "total_cost": 100000.0,
+        "total_market_value": 87000.0,
+        "total_pnl": -13000.0,
+        "total_pnl_rate": -0.13,
+        "floating_pnl": -13000.0,
+        "floating_pnl_rate": -0.13,
+        "sector_exposures": {
+          "泛科技大类": 65.56,
+          "海外美股科技": 36.09,
+          "A股半导体与制造": 29.47,
+          "医药生物与大健康": 6.17,
+          "核心资产/港股互联网": 5.79,
+          "大宗商品与避险": 4.41,
+          "食品饮料与白酒": 4.00,
+          "新能源与低碳电池": 3.45,
+          "金融与银行高股息": 3.33,
+          "公用事业与绿电": 2.39,
+          "中盘宽基": 2.16,
+          "国防军工安全": 1.55,
+          "固定收益与纯债": 1.17
+        }
+      },
+      "penetrated_holdings": [
+        {"rank": 1, "stock_code": "NVDA", "stock_name": "NVDA (英伟达)", "market": "美股", "sector": "AI算力芯片与GPU", "effective_weight": 3.18, "effective_value": 2763.20, "source_funds_count": 8, "core_fund_desc": "8只并联纳指100共同重仓持有"},
+        {"rank": 2, "stock_code": "AAPL", "stock_name": "AAPL (苹果)", "market": "美股", "sector": "消费电子与iOS生态", "effective_weight": 2.96, "effective_value": 2574.80, "source_funds_count": 8, "core_fund_desc": "8只并联纳指100共同重仓持有"},
+        {"rank": 3, "stock_code": "MSFT", "stock_name": "MSFT (微软)", "market": "美股", "sector": "软件与Azure云计算", "effective_weight": 2.82, "effective_value": 2449.20, "source_funds_count": 8, "core_fund_desc": "8只并联纳指100共同重仓持有"},
+        {"rank": 4, "stock_code": "002371", "stock_name": "北方华创", "market": "A股", "sector": "半导体前道核心设备", "effective_weight": 2.17, "effective_value": 1884.10, "source_funds_count": 4, "core_fund_desc": "诺安(¥603)、银河(¥486)、华夏芯片(¥476)、广发芯片(¥317)"},
+        {"rank": 5, "stock_code": "688981", "stock_name": "中芯国际", "market": "A股", "sector": "晶圆代工制造龙头", "effective_weight": 1.99, "effective_value": 1727.00, "source_funds_count": 4, "core_fund_desc": "诺安(¥585)、银河(¥331)、华夏芯片(¥486)、广发芯片(¥324)"},
+        {"rank": 6, "stock_code": "AMZN", "stock_name": "AMZN (亚马逊)", "market": "美股", "sector": "电商与AWS云计算", "effective_weight": 1.88, "effective_value": 1632.80, "source_funds_count": 8, "core_fund_desc": "8只并联纳指100共同重仓持有"},
+        {"rank": 7, "stock_code": "META", "stock_name": "META (Meta)", "market": "美股", "sector": "社交媒体与开源AI", "effective_weight": 1.73, "effective_value": 1507.20, "source_funds_count": 8, "core_fund_desc": "8只并联纳指100共同重仓持有"},
+        {"rank": 8, "stock_code": "GOOGL", "stock_name": "GOOGL (谷歌)", "market": "美股", "sector": "搜索与Google Cloud", "effective_weight": 1.62, "effective_value": 1413.00, "source_funds_count": 8, "core_fund_desc": "8只并联纳指100共同重仓持有"},
+        {"rank": 9, "stock_code": "AVGO", "stock_name": "AVGO (博通)", "market": "美股", "sector": "网络交换芯片与ASIC", "effective_weight": 1.52, "effective_value": 1318.80, "source_funds_count": 8, "core_fund_desc": "8只并联纳指100共同重仓持有"},
+        {"rank": 10, "stock_code": "688041", "stock_name": "海光信息", "market": "A股", "sector": "x86 CPU与DCU加速芯片", "effective_weight": 1.40, "effective_value": 1213.90, "source_funds_count": 3, "core_fund_desc": "银河(¥525)、华夏芯片(¥413)、广发芯片(¥275)"},
+        {"rank": 11, "stock_code": "603501", "stock_name": "韦尔股份", "market": "A股", "sector": "CIS传感器与模拟芯片", "effective_weight": 1.28, "effective_value": 1112.60, "source_funds_count": 3, "core_fund_desc": "诺安(¥505)、华夏芯片(¥364)、广发芯片(¥243)"},
+        {"rank": 12, "stock_code": "688012", "stock_name": "中微公司", "market": "A股", "sector": "等离子刻蚀设备", "effective_weight": 1.18, "effective_value": 1024.20, "source_funds_count": 3, "core_fund_desc": "银河(¥497)、华夏芯片(¥315)、广发芯片(¥210)"},
+        {"rank": 13, "stock_code": "TSLA", "stock_name": "TSLA (特斯拉)", "market": "美股", "sector": "新能源汽车与智驾AI", "effective_weight": 1.15, "effective_value": 1004.80, "source_funds_count": 8, "core_fund_desc": "8只并联纳指100共同重仓持有"},
+        {"rank": 14, "stock_code": "600519", "stock_name": "贵州茅台", "market": "A股", "sector": "高端白酒龙头", "effective_weight": 1.15, "effective_value": 1000.80, "source_funds_count": 2, "core_fund_desc": "易方达蓝筹(¥478)、招商白酒(¥522)"},
+        {"rank": 15, "stock_code": "000858", "stock_name": "五粮液", "market": "A股", "sector": "浓香白酒龙头", "effective_weight": 1.13, "effective_value": 985.70, "source_funds_count": 2, "core_fund_desc": "易方达蓝筹(¥463)、招商白酒(¥522)"}
+      ],
+      "sector_distribution": [
+        {"sector": "海外美股科技", "value": 31400.0, "weight": 36.09, "macro_group": "泛科技大类", "color": "#58a6ff"},
+        {"sector": "A股半导体与制造", "value": 25640.0, "weight": 29.47, "macro_group": "泛科技大类", "color": "#f85149"},
+        {"sector": "医药生物与大健康", "value": 5370.0, "weight": 6.17, "macro_group": "消费健康", "color": "#bc8cff"},
+        {"sector": "核心资产/港股互联网", "value": 5040.0, "weight": 5.79, "macro_group": "核心宽基", "color": "#79c0ff"},
+        {"sector": "大宗商品与避险", "value": 3840.0, "weight": 4.41, "macro_group": "防御避险", "color": "#d29922"},
+        {"sector": "食品饮料与白酒", "value": 3480.0, "weight": 4.00, "macro_group": "大消费", "color": "#ff7b72"},
+        {"sector": "新能源与低碳电池", "value": 3000.0, "weight": 3.45, "macro_group": "先进制造", "color": "#56d364"},
+        {"sector": "金融与银行高股息", "value": 2900.0, "weight": 3.33, "macro_group": "防御红利", "color": "#e3b341"},
+        {"sector": "公用事业与绿电", "value": 2080.0, "weight": 2.39, "macro_group": "公用事业", "color": "#39d353"},
+        {"sector": "中盘宽基", "value": 1880.0, "weight": 2.16, "macro_group": "核心宽基", "color": "#8b949e"},
+        {"sector": "国防军工安全", "value": 1350.0, "weight": 1.55, "macro_group": "国防安全", "color": "#f0883e"},
+        {"sector": "固定收益与纯债", "value": 1020.0, "weight": 1.17, "macro_group": "固定收益", "color": "#238636"}
+      ],
+      "fund_list": [
+        {"code": "000055", "name": "广发纳斯达克100ETF联接A", "category": "QDII并联纳指", "sector": "海外美股科技", "cost": 6000.0, "market_value": 5400.0, "pnl": -600.0, "pnl_rate": -0.10, "weight": 6.21, "clone_group_id": "CLONE_QDII_NDX100", "is_redundant": true},
+        {"code": "006479", "name": "广发纳斯达克100ETF联接C", "category": "QDII并联纳指", "sector": "海外美股科技", "cost": 4000.0, "market_value": 3600.0, "pnl": -400.0, "pnl_rate": -0.10, "weight": 4.14, "clone_group_id": "CLONE_QDII_NDX100", "is_redundant": true},
+        {"code": "000834", "name": "大成纳斯达克100联接A", "category": "QDII并联纳指", "sector": "海外美股科技", "cost": 5000.0, "market_value": 4550.0, "pnl": -450.0, "pnl_rate": -0.09, "weight": 5.23, "clone_group_id": "CLONE_QDII_NDX100", "is_redundant": true},
+        {"code": "160213", "name": "国泰纳斯达克100(QDII-LOF)", "category": "QDII并联纳指", "sector": "海外美股科技", "cost": 5000.0, "market_value": 4450.0, "pnl": -550.0, "pnl_rate": -0.11, "weight": 5.11, "clone_group_id": "CLONE_QDII_NDX100", "is_redundant": true},
+        {"code": "000043", "name": "嘉实美国成长股票(QDII)", "category": "QDII并联纳指", "sector": "海外美股科技", "cost": 4000.0, "market_value": 3520.0, "pnl": -480.0, "pnl_rate": -0.12, "weight": 4.05, "clone_group_id": "CLONE_QDII_NDX100", "is_redundant": true},
+        {"code": "040046", "name": "华安纳斯达克100ETF联接A", "category": "QDII并联纳指", "sector": "海外美股科技", "cost": 5000.0, "market_value": 4500.0, "pnl": -500.0, "pnl_rate": -0.10, "weight": 5.17, "clone_group_id": "CLONE_QDII_NDX100", "is_redundant": true},
+        {"code": "016055", "name": "华夏纳斯达克100ETF联接A", "category": "QDII并联纳指", "sector": "海外美股科技", "cost": 3000.0, "market_value": 2730.0, "pnl": -270.0, "pnl_rate": -0.09, "weight": 3.14, "clone_group_id": "CLONE_QDII_NDX100", "is_redundant": true},
+        {"code": "009880", "name": "华宝纳斯达克科技ETF联接A", "category": "QDII并联纳指", "sector": "海外美股科技", "cost": 3000.0, "market_value": 2650.0, "pnl": -350.0, "pnl_rate": -0.1167, "weight": 3.05, "clone_group_id": "CLONE_QDII_NDX100", "is_redundant": true},
+        {"code": "320007", "name": "诺安成长混合", "category": "A股半导体", "sector": "A股半导体与制造", "cost": 8000.0, "market_value": 6160.0, "pnl": -1840.0, "pnl_rate": -0.23, "weight": 7.08, "is_loss_heavy": true},
+        {"code": "519674", "name": "银河创新成长混合A", "category": "A股半导体", "sector": "A股半导体与制造", "cost": 7000.0, "market_value": 5530.0, "pnl": -1470.0, "pnl_rate": -0.21, "weight": 6.36, "is_loss_heavy": true},
+        {"code": "008888", "name": "华夏国证半导体芯片ETF联接A", "category": "A股半导体", "sector": "A股半导体与制造", "cost": 6000.0, "market_value": 4860.0, "pnl": -1140.0, "pnl_rate": -0.19, "weight": 5.59, "is_loss_heavy": true},
+        {"code": "011102", "name": "广发中证全指半导体联接A", "category": "A股半导体", "sector": "A股半导体与制造", "cost": 4000.0, "market_value": 3240.0, "pnl": -760.0, "pnl_rate": -0.19, "weight": 3.72, "is_loss_heavy": true},
+        {"code": "001594", "name": "天弘中证计算机ETF联接A", "category": "软件与AI", "sector": "A股半导体与制造", "cost": 4000.0, "market_value": 3360.0, "pnl": -640.0, "pnl_rate": -0.16, "weight": 3.86},
+        {"code": "012414", "name": "招商中证消费电子主题联接A", "category": "消费电子", "sector": "A股半导体与制造", "cost": 3000.0, "market_value": 2490.0, "pnl": -510.0, "pnl_rate": -0.17, "weight": 2.86},
+        {"code": "005827", "name": "易方达蓝筹精选混合", "category": "核心蓝筹", "sector": "核心资产/港股互联网", "cost": 6000.0, "market_value": 5040.0, "pnl": -960.0, "pnl_rate": -0.16, "weight": 5.79},
+        {"code": "001616", "name": "嘉实环保低碳股票", "category": "新能源", "sector": "新能源与低碳电池", "cost": 4000.0, "market_value": 3000.0, "pnl": -1000.0, "pnl_rate": -0.25, "weight": 3.45},
+        {"code": "161725", "name": "招商中证白酒指数(LOF)A", "category": "食品饮料", "sector": "食品饮料与白酒", "cost": 4000.0, "market_value": 3480.0, "pnl": -520.0, "pnl_rate": -0.13, "weight": 4.00},
+        {"code": "003095", "name": "中欧医疗健康混合A", "category": "医药医疗", "sector": "医药生物与大健康", "cost": 5000.0, "market_value": 3650.0, "pnl": -1350.0, "pnl_rate": -0.27, "weight": 4.20},
+        {"code": "001180", "name": "易方达健康产业混合", "category": "医药医疗", "sector": "医药生物与大健康", "cost": 2000.0, "market_value": 1720.0, "pnl": -280.0, "pnl_rate": -0.14, "weight": 1.98},
+        {"code": "005669", "name": "前海开源公用事业股票", "category": "公用事业", "sector": "公用事业与绿电", "cost": 2000.0, "market_value": 2080.0, "pnl": 80.0, "pnl_rate": 0.04, "weight": 2.39},
+        {"code": "000216", "name": "华安黄金易ETF联接A", "category": "避险大宗", "sector": "大宗商品与避险", "cost": 3000.0, "market_value": 3840.0, "pnl": 840.0, "pnl_rate": 0.28, "weight": 4.41},
+        {"code": "001595", "name": "富国中证银行指数联接A", "category": "银行红利", "sector": "金融与银行高股息", "cost": 2500.0, "market_value": 2900.0, "pnl": 400.0, "pnl_rate": 0.16, "weight": 3.33},
+        {"code": "001052", "name": "华夏中证500ETF联接A", "category": "中盘宽基", "sector": "中盘宽基", "cost": 2000.0, "market_value": 1880.0, "pnl": -120.0, "pnl_rate": -0.06, "weight": 2.16},
+        {"code": "001875", "name": "前海开源国家安全混合", "category": "国防军工", "sector": "国防军工安全", "cost": 1500.0, "market_value": 1350.0, "pnl": -150.0, "pnl_rate": -0.10, "weight": 1.55},
+        {"code": "000198", "name": "天弘同利债券(LOF)A", "category": "纯债防守", "sector": "固定收益与纯债", "cost": 1000.0, "market_value": 1020.0, "pnl": 20.0, "pnl_rate": 0.02, "weight": 1.17}
+      ],
+      "breaker_status": {
+        "is_tripped": true,
+        "max_severity": "P0_CRITICAL",
+        "intercept_messages": [
+          {
+            "code": "P0_MACRO_TECH_OVERWEIGHT",
+            "severity": "P0",
+            "title": "泛科技宏观大类敞口击穿硬顶 (65.56% >= 50.00%)",
+            "detail": "组合泛科技真实穿透敞口已达 65.56%，超出 50.00% 极限制约线 +15.56%，且总体浮亏处于 -13.00% 深度受压状态。",
+            "action": "系统已强制冻结泛科技及半导体增量资金申购，开启 48 小时强制冷静期。"
+          },
+          {
+            "code": "P1_LOSS_CHASING_IMPULSE",
+            "severity": "P1",
+            "title": "防冲动追跌逆向加仓熔断 (半导体浮亏 -20.84%)",
+            "detail": "半导体集群（诺安、银河、华夏芯片）浮亏超过 -19%~-23%，追跌补仓无法对冲系统性下行风险，触发情绪防冲动闸口。",
+            "action": "建议资金分流至固收纯债或红利低波，或等待 48 小时冷静期后重新评估。"
+          },
+          {
+            "code": "P2_PARALLEL_REDUNDANCY",
+            "severity": "P2",
+            "title": "并联克隆基金假分散预警 (8只纳指100)",
+            "detail": "检测到 8 只基金并联跟踪纳斯达克100指数，冗余度指数 RI 达 0.88，占用了 36.09% 资产却未提供任何资产分散效果。",
+            "action": "建议归并至综合费率最低的 1~2 只纳指 ETF 联接基金，节省管理费并理清记账。"
+          }
+        ],
+        "cooling_off_hours": 48
+      }
+    };
+
+    // Global Data Container
+    let PORTFOLIO_DATA = DEFAULT_BENCHMARK_DATA;
+
+    // Load Injected Data if available
+    try {
+      const injectedElem = document.getElementById("portfolio-data-script");
+      if (injectedElem && injectedElem.textContent.trim()) {
+        const rawText = injectedElem.textContent.trim();
+        // If content is valid JSON, it begins with '{' or '[' rather than placeholder comments
+        if (rawText.startsWith("{") || rawText.startsWith("[")) {
+          const parsed = JSON.parse(rawText);
+          if (parsed && typeof parsed === 'object') {
+            PORTFOLIO_DATA = parsed;
+          }
+        }
+      }
+    } catch (e) {
+      console.warn("Failed to parse injected JSON, using default benchmark dataset:", e);
+    }
+
+    // Global HTML Entity Sanitizer to prevent DOM XSS Injection
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    // Tab Switching Helper
+    function switchTab(tabId, btnElem) {
+      document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
+      document.querySelectorAll(".tab-btn").forEach(el => el.classList.remove("active"));
+      
+      const target = document.getElementById(tabId);
+      if (target) target.classList.add("active");
+      
+      if (btnElem) {
+        btnElem.classList.add("active");
+      } else {
+        const matchingBtn = document.querySelector(`button[onclick*="${tabId}"]`);
+        if (matchingBtn) matchingBtn.classList.add("active");
+      }
+      
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    // Currency Formatter
+    function fmtCurrency(val) {
+      if (typeof val !== 'number') return '¥0.00';
+      return (val < 0 ? '-' : '') + '¥' + Math.abs(val).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // Percentage Formatter
+    function fmtPercent(val) {
+      if (typeof val !== 'number') return '0.00%';
+      // If val is like -0.13, multiply by 100
+      let num = val;
+      if (Math.abs(num) <= 1.0 && num !== 0) {
+        num = num * 100;
+      }
+      return (num > 0 ? '+' : '') + num.toFixed(2) + '%';
+    }
+
+    // Render Top 15 Horizontal Bar Chart
+    function renderTopHoldingsBars() {
+      const container = document.getElementById("top-holdings-bar-list");
+      const tbody = document.getElementById("top-holdings-tbody");
+      if (!container || !PORTFOLIO_DATA.penetrated_holdings) return;
+
+      const holdings = PORTFOLIO_DATA.penetrated_holdings.slice(0, 15);
+      const maxWeight = Math.max(...holdings.map(h => h.effective_weight || (h.weight ? h.weight * 100 : 0)), 4.0);
+
+      let barHtml = "";
+      let tableHtml = "";
+
+      holdings.forEach((h, idx) => {
+        const rank = h.rank || (idx + 1);
+        const weight = h.effective_weight !== undefined ? h.effective_weight : (h.weight ? h.weight * 100 : 0);
+        const barWidthPct = Math.min(100, Math.max(2, (weight / maxWeight) * 100));
+        const val = h.effective_value || (h.market_value || 0);
+        const isCn = (h.market === 'A股');
+        const rankCls = rank <= 3 ? "bar-rank top-3" : "bar-rank";
+        const sName = escapeHtml(h.stock_name || h.name || '');
+        const sMarket = escapeHtml(h.market || '美股');
+        const sSector = escapeHtml(h.sector || '');
+        const sCode = escapeHtml(h.stock_code || '');
+        const sDesc = escapeHtml(h.core_fund_desc || (h.source_funds ? h.source_funds.join(', ') : '共同重仓'));
+
+        barHtml += `
+          <div class="bar-row">
+            <div class="${rankCls}">#${rank}</div>
+            <div class="bar-name-wrap">
+              <div class="bar-name">${sName}</div>
+              <div class="bar-meta">
+                <span class="badge ${isCn ? 'badge-danger' : 'badge-primary'}">${sMarket}</span>
+                <span>${sSector}</span>
+              </div>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill ${isCn ? 'bar-fill-cn' : ''}" style="width: ${barWidthPct}%;"></div>
+            </div>
+            <div class="bar-weight num val-${isCn ? 'danger' : 'primary'}">${weight.toFixed(2)}%</div>
+            <div class="bar-val num">${fmtCurrency(val)}</div>
+          </div>
+        `;
+
+        tableHtml += `
+          <tr>
+            <td style="text-align: center; font-weight: 700;" class="${rank <= 3 ? 'val-warning' : 'text-muted'}">#${rank}</td>
+            <td style="font-weight: 600;">${sName} <span class="badge badge-neutral" style="font-size: 10px;">${sCode}</span></td>
+            <td><span class="badge ${isCn ? 'badge-danger' : 'badge-primary'}">${sMarket}</span></td>
+            <td>${sSector}</td>
+            <td style="text-align: right; font-weight: 600;" class="num">${fmtCurrency(val)}</td>
+            <td style="text-align: right; font-weight: 700;" class="num val-${isCn ? 'danger' : 'primary'}">${weight.toFixed(2)}%</td>
+            <td style="text-align: center;"><span class="badge badge-warning">${h.source_funds_count || (h.source_funds ? h.source_funds.length : 1)} 只基金</span></td>
+            <td style="font-size: 12px; color: var(--text-secondary);">${sDesc}</td>
+          </tr>
+        `;
+      });
+
+      container.innerHTML = barHtml;
+      if (tbody) tbody.innerHTML = tableHtml;
+    }
+
+    // Render Native SVG Donut Chart
+    function renderDonutChart() {
+      const g = document.getElementById("donut-slices-group");
+      const sectorListContainer = document.getElementById("sector-exposure-list");
+      if (!g || !PORTFOLIO_DATA.sector_distribution) return;
+
+      const sectors = PORTFOLIO_DATA.sector_distribution;
+      const totalVal = sectors.reduce((acc, s) => acc + (s.value || 0), 0) || (PORTFOLIO_DATA.portfolio_summary && PORTFOLIO_DATA.portfolio_summary.total_market_value) || 0.0;
+      
+      const cx = 180, cy = 180, r = 125, strokeWidth = 36;
+      const circumference = 2 * Math.PI * r;
+      
+      let cumulativeAngle = 0;
+      let svgHtml = "";
+      let listHtml = "";
+
+      sectors.forEach((sec, idx) => {
+        const pct = sec.weight !== undefined ? sec.weight : (totalVal > 0 ? ((sec.value / totalVal) * 100) : 0.0);
+        const arcLength = (pct / 100) * circumference;
+        const dashoffset = -(cumulativeAngle / 360) * circumference;
+        const color = sec.color || `hsl(${(idx * 31) % 360}, 75%, 60%)`;
+        const secName = escapeHtml(sec.sector || '');
+        const secMacro = escapeHtml(sec.macro_group || '其他');
+
+        // SVG Circle Slice
+        svgHtml += `
+          <circle cx="${cx}" cy="${cy}" r="${r}" fill="none"
+                  stroke="${color}" stroke-width="${strokeWidth}"
+                  stroke-dasharray="${arcLength} ${circumference - arcLength}"
+                  stroke-dashoffset="${dashoffset}"
+                  class="donut-slice"
+                  data-name="${secName}"
+                  data-val="${sec.value || 0}"
+                  data-pct="${pct.toFixed(2)}%"
+                  onmouseover="onDonutSliceHover(this.getAttribute('data-name'), ${sec.value || 0}, ${pct.toFixed(2)}, '${color}')"
+                  onmouseout="resetDonutSliceCenter()"
+          />
+        `;
+
+        cumulativeAngle += (pct / 100) * 360;
+
+        // Sector List Row
+        const isTech = sec.macro_group === '泛科技大类';
+        listHtml += `
+          <div style="background: var(--bg-subtle); padding: 10px 14px; border-radius: var(--radius-sm); border-left: 3px solid ${color};">
+            <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 600;">
+              <span>${secName}</span>
+              <span class="num val-${isTech ? 'danger' : 'primary'}">${pct.toFixed(2)}% (${fmtCurrency(sec.value)})</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 4px;">
+              <span>归属大类: ${secMacro}</span>
+              <span>${pct >= 30 ? '🔴 突破上限' : (pct >= 20 ? '🟡 接近预警' : '🟢 正常区间')}</span>
+            </div>
+          </div>
+        `;
+      });
+
+      g.innerHTML = svgHtml;
+      if (sectorListContainer) sectorListContainer.innerHTML = listHtml;
+    }
+
+    function onDonutSliceHover(name, val, pct, color) {
+      const title = document.getElementById("donut-center-title");
+      const valEl = document.getElementById("donut-center-val");
+      const sub = document.getElementById("donut-center-sub");
+      if (title) title.textContent = name;
+      if (valEl) {
+        valEl.textContent = pct + '%';
+        valEl.setAttribute("fill", color);
+      }
+      if (sub) {
+        sub.textContent = fmtCurrency(val);
+        sub.setAttribute("fill", "#1f2328");
+      }
+    }
+
+    function resetDonutSliceCenter() {
+      const title = document.getElementById("donut-center-title");
+      const valEl = document.getElementById("donut-center-val");
+      const sub = document.getElementById("donut-center-sub");
+      const exp = PORTFOLIO_DATA.portfolio_summary && PORTFOLIO_DATA.portfolio_summary.sector_exposures;
+      const techPct = (exp && exp["泛科技大类"] !== undefined) ? exp["泛科技大类"] : 0.0;
+      if (title) title.textContent = "泛科技大类总敞口";
+      if (valEl) {
+        valEl.textContent = techPct.toFixed(2) + "%";
+        valEl.setAttribute("fill", techPct >= 50.0 ? "#f85149" : (techPct >= 40.0 ? "#d29922" : "#3fb950"));
+      }
+      if (sub) {
+        if (techPct >= 50.0) {
+          sub.textContent = `🔴 击穿 50% 硬顶 (+${(techPct - 50.0).toFixed(2)}%)`;
+          sub.setAttribute("fill", "#ff7b72");
+        } else if (techPct >= 40.0) {
+          sub.textContent = `🟡 临界警戒线 (剩余 ${(50.0 - techPct).toFixed(2)}%)`;
+          sub.setAttribute("fill", "#d29922");
+        } else {
+          sub.textContent = `🟢 安全受控区间`;
+          sub.setAttribute("fill", "#3fb950");
+        }
+      }
+    }
+
+    // Core Holdings Macro Background, Volatility Forecast & Action Plan Knowledge Base
+    const MACRO_INSIGHTS = {
+      '001000': {
+        title: '🥇 建信上海金 ETF 联接 C',
+        badge: '🔥 核心重仓 24.1%',
+        badgeClass: 'badge-success',
+        macro: '全球去美元化与央行购金长周期（中东与地缘摩擦常态化，中土波等多国央行连续数季度净增持实体黄金作为去中心化非主权硬通货储备）；美联储降息周期开启压低无息资产机会成本，国内存款破 1.5% 与“资产荒”掀起民间黄金定投热。',
+        forecast: '国际金价逼近历史 95% 超买分位数高位。若美国抗通胀数据反复推迟后续降息节奏，或地缘局部停火，黄金面临阶段性 5%~10% 的高位剧烈震荡回调与多头踩踏；需防范汇率波动对境内金价的汇兑侵蚀。',
+        advice: '● 严禁追高加仓：24.1% 占比已达组合第一大重仓防守极限量；<br>● 倒金字塔阶梯止盈：若金价继续冲高致占比超 28%，每涨 5% 赎回 20% 浮盈份额再平衡至红利或纯债；<br>● 底仓 20% 坚决锁死作为极端黑天鹅对冲盾牌。'
+      },
+      '001001': {
+        title: '🛡️ 华泰柏瑞中证红利低波动 ETF 联接 C',
+        badge: '🛡️ 核心重仓 15.1%',
+        badgeClass: 'badge-success',
+        macro: '新“国九条”重塑红利生态，监管层全面强化上市公司现金分红与央国企市值管理考核；国内 30 年国债破 2.2% 低利率背景下，4%~6% 稳定股息率且现金流健康的央国企成为长线机构最稀缺的“资产荒”定盘星。',
+        forecast: 'β 波动率仅为成长股 1/2，下行抗跌极佳（预期最大回撤通常 < 5%）；但在顺周期政策强刺激或牛市情绪亢奋期，资金转向高弹性成长股，面临“风格轮动式短期跑输”；煤炭价格波动对资源股息有轻微扰动。',
+        advice: '● 作为“定盘星”长期持有：15.1% 占比是持续产生正收益的现金流盾牌；<br>● 开启分红再投资：利用复利滚动累积份额；<br>● 逢市场狂炒成长、红利回调时逆势增配。'
+      },
+      '012525': {
+        title: '⚠️ 融通稳信增益 6 个月持有期混合 C',
+        badge: '⚠️ 瑕疵重仓 12.1%',
+        badgeClass: 'badge-danger',
+        macro: '“固收+”变“固收-”行业暗雷，运作中过度配置了高波动的权益仓位、可转债微盘股或弱资质信用债，在动荡中发生非对称亏损，严重违背理财替代初衷；6 个月持有期锁仓剥夺止损选择权，基民深陷赌徒死扛沉没成本。',
+        forecast: '净值修复极其缓慢，跟随大盘温和反弹空间预计仅 2%~5%；若转债信用利差走阔或量化中性端波动，面临净值二次下探与长期跑输纯债基准风险，继续消耗时间与机会成本。',
+        advice: '● 绝对硬顶冷冻，严禁追加一分钱：坚决不向“假固收+”补仓摊薄成本，拒绝往瑕疵资产填入优质流动性；<br>● 锁定期满“断舍离”置换为真纯债：6 个月解锁后，待净值随反弹修复至 -8%~-10% 左右，分批赎回并将资金置换为真正的中短债纯债（如天弘同利），彻底清洗不良资产。'
+      },
+      '001002': {
+        title: '⚠️ 融通稳信增益 6 个月持有期混合 C',
+        badge: '⚠️ 瑕疵重仓 12.1%',
+        badgeClass: 'badge-danger',
+        macro: '“固收+”变“固收-”行业暗雷，运作中过度配置了高波动的权益仓位、可转债微盘股或弱资质信用债，在动荡中发生非对称亏损，严重违背理财替代初衷；6 个月持有期锁仓剥夺止损选择权，基民深陷赌徒死扛沉没成本。',
+        forecast: '净值修复极其缓慢，跟随大盘温和反弹空间预计仅 2%~5%；若转债信用利差走阔或量化中性端波动，面临净值二次下探与长期跑输纯债基准风险，继续消耗时间与机会成本。',
+        advice: '● 绝对硬顶冷冻，严禁追加一分钱：坚决不向“假固收+”补仓摊薄成本，拒绝往瑕疵资产填入优质流动性；<br>● 锁定期满“断舍离”置换为真纯债：6 个月解锁后，待净值随反弹修复至 -8%~-10% 左右，分批赎回并将资金置换为真正的中短债纯债（如天弘同利），彻底清洗不良资产。'
+      },
+      '001004': {
+        title: '🇺🇸 广发纳斯达克 100 ETF 联接 A',
+        badge: '🇺🇸 纳指集群 (合占15.6%)',
+        badgeClass: 'badge-warning',
+        macro: '生成式 AI 算力军备竞赛，英伟达 Blackwell 架构出货与大模型推理爆发，北美云巨头百亿 CAPEX 支撑核心业绩；因单日外汇额度限购，被迫开设 6 只影子基金并联建仓，造成假分散与交易摩擦。',
+        forecast: 'PE 处于 32~35 倍高位，财报容错极低，防 10 年美债利率反弹或 AI 商业化放缓引发 8%~15% 快速回撤；需警惕半导体出口管制加码对供应链情绪冲击。',
+        advice: '● 严守 50% 科技硬顶：当前科技敞口 33.47%，纳指占 15.6%，处于合规线内，切忌盲目再追；<br>● 停止新开代码，逐步向本基金归集：待大额放宽向广发纳指单只归集；<br>● 仅在回撤支撑位小额定投，杜绝大阳线追高。'
+      },
+      '001005': {
+        title: '🇺🇸 景顺长城纳斯达克科技市值加权',
+        badge: '🇺🇸 纳指集群 (合占15.6%)',
+        badgeClass: 'badge-warning',
+        macro: '生成式 AI 算力军备竞赛，北美云巨头百亿 CAPEX 支撑核心业绩；纳指并联影子基金集群之一。',
+        forecast: 'PE 处于 32~35 倍高位，财报容错极低，防 10 年美债利率反弹或商业化不及预期引发 8%~15% 快速回撤。',
+        advice: '● 严守 50% 科技硬顶，停止新开代码，待放宽向头部单只归集；回撤支撑位小额定投。'
+      },
+      '001007': {
+        title: '🇺🇸 万家纳斯达克 100 指数(QDII)A',
+        badge: '🇺🇸 纳指集群 (合占15.6%)',
+        badgeClass: 'badge-warning',
+        macro: '生成式 AI 算力军备竞赛，北美云巨头百亿 CAPEX 支撑核心业绩；纳指并联影子基金集群之一。',
+        forecast: 'PE 处于 32~35 倍高位，财报容错极低，防 10 年美债利率反弹或商业化不及预期引发 8%~15% 快速回撤。',
+        advice: '● 严守 50% 科技硬顶，停止新开代码，待放宽向头部单只归集；回撤支撑位小额定投。'
+      },
+      '001016': {
+        title: '🇺🇸 华安纳斯达克 100 指数(QDII)A',
+        badge: '🇺🇸 纳指集群 (合占15.6%)',
+        badgeClass: 'badge-warning',
+        macro: '生成式 AI 算力军备竞赛，北美云巨头百亿 CAPEX 支撑业绩；纳指并联影子基金集群之一。',
+        forecast: 'PE 处于 32~35 倍高位，财报容错极低，防 10 年美债利率反弹或商业化不及预期引发 8%~15% 快速回撤。',
+        advice: '● 严守 50% 科技硬顶，停止新开代码，待放宽向头部单只归集；回撤支撑位小额定投。'
+      },
+      '001018': {
+        title: '🇺🇸 南方纳斯达克 100 指数(QDII)C',
+        badge: '🇺🇸 纳指集群 (合占15.6%)',
+        badgeClass: 'badge-warning',
+        macro: '生成式 AI 算力军备竞赛，北美云巨头百亿 CAPEX 支撑业绩；纳指并联影子基金集群之一。',
+        forecast: 'PE 处于 32~35 倍高位，财报容错极低，防 10 年美债利率反弹或商业化不及预期引发 8%~15% 快速回撤。',
+        advice: '● 严守 50% 科技硬顶，停止新开代码，待放宽向头部单只归集；回撤支撑位小额定投。'
+      },
+      '001024': {
+        title: '🇺🇸 华安纳斯达克 100 ETF 联接 C',
+        badge: '🇺🇸 纳指集群 (合占15.6%)',
+        badgeClass: 'badge-warning',
+        macro: '生成式 AI 算力军备竞赛，北美云巨头百亿 CAPEX 支撑业绩；纳指并联影子基金集群之一。',
+        forecast: 'PE 处于 32~35 倍高位，财报容错极低，防 10 年美债利率反弹或商业化不及预期引发 8%~15% 快速回撤。',
+        advice: '● 严守 50% 科技硬顶，停止新开代码，待放宽向头部单只归集；回撤支撑位小额定投。'
+      }
+    };
+
+    function toggleMacroInsight(code) {
+      const row = document.getElementById("macro-row-" + code);
+      if (row) {
+        row.style.display = (row.style.display === "none" || !row.style.display) ? "table-row" : "none";
+      }
+    }
+
+    // Render Full 25/26 Funds Table
+    function renderFundsTable(filterCat = 'ALL') {
+      const tbody = document.getElementById("funds-table-tbody");
+      const redundancyGrid = document.getElementById("redundancy-clones-grid");
+      if (!tbody || !PORTFOLIO_DATA.fund_list) return;
+
+      const totalVal = (PORTFOLIO_DATA.portfolio_summary && PORTFOLIO_DATA.portfolio_summary.total_market_value) || 0.0;
+      let tableHtml = "";
+      let clonesHtml = "";
+
+      PORTFOLIO_DATA.fund_list.forEach((f, idx) => {
+        // Filter logic
+        let match = true;
+        if (filterCat === 'QDII') match = (f.category && f.category.includes('QDII'));
+        else if (filterCat === 'SEMI') match = (f.category && f.category.includes('半导体'));
+        else if (filterCat === 'HEALTH') match = (f.category && (f.category.includes('医药') || f.category.includes('消费') || f.category.includes('白酒')));
+        else if (filterCat === 'DEFENSIVE') match = (f.category && (f.category.includes('纯债') || f.category.includes('银行') || f.category.includes('黄金') || f.category.includes('公用')));
+        else if (filterCat === 'OTHERS') match = (!f.category || (!f.category.includes('QDII') && !f.category.includes('半导体')));
+
+        const isClone = !!f.clone_group_id || (f.category && f.category.includes('并联'));
+        const pnl = f.pnl !== undefined ? f.pnl : ((f.market_value || 0) - (f.cost || 0));
+        const pnlRate = f.pnl_rate !== undefined ? f.pnl_rate : (pnl / (f.cost || 1));
+        const isLoss = pnl < 0;
+        const weight = f.weight !== undefined ? f.weight : (totalVal > 0 ? ((f.market_value / totalVal) * 100) : 0.0);
+
+        const fCode = escapeHtml(f.code || '');
+        const fName = escapeHtml(f.name || '');
+        const fCategory = escapeHtml(f.category || '权益基金');
+        const fSector = escapeHtml(f.sector || '综合');
+
+        const hasMacro = !!MACRO_INSIGHTS[fCode];
+        const macroInfo = MACRO_INSIGHTS[fCode];
+
+        let statusBadge = '<span class="badge badge-success">正常</span>';
+        if (hasMacro) {
+          statusBadge = `<span class="badge ${macroInfo.badgeClass}" style="font-weight: 700;">${escapeHtml(macroInfo.badge)}</span>`;
+        } else if (isClone) {
+          statusBadge = '<span class="badge badge-warning">并联克隆</span>';
+        } else if (pnlRate <= -0.18) {
+          statusBadge = '<span class="badge badge-danger">重度浮亏</span>';
+        }
+
+        const nameActionHtml = hasMacro
+          ? `<div style="display: flex; align-items: center; justify-content: space-between; gap: 6px;">
+               <span>${fName}</span>
+               <button type="button" class="btn-micro" onclick="toggleMacroInsight('${fCode}')">🌐 宏观透视 ▾</button>
+             </div>`
+          : fName;
+
+        if (match) {
+          tableHtml += `
+            <tr>
+              <td style="text-align: center; color: var(--text-muted);">${idx + 1}</td>
+              <td style="font-family: var(--font-mono); font-weight: 600; color: var(--color-primary);">${fCode}</td>
+              <td style="font-weight: 600;">${nameActionHtml}</td>
+              <td><span class="badge ${isClone ? 'badge-warning' : 'badge-neutral'}">${fCategory}</span></td>
+              <td>${fSector}</td>
+              <td style="text-align: right;" class="num">${fmtCurrency(f.cost)}</td>
+              <td style="text-align: right; font-weight: 600;" class="num">${fmtCurrency(f.market_value)}</td>
+              <td style="text-align: right; font-weight: 600;" class="num val-${isLoss ? 'danger' : 'success'}">${fmtCurrency(pnl)}</td>
+              <td style="text-align: right; font-weight: 700;" class="num val-${isLoss ? 'danger' : 'success'}">${fmtPercent(pnlRate)}</td>
+              <td style="text-align: right;" class="num">${weight.toFixed(2)}%</td>
+              <td style="text-align: center;">${statusBadge}</td>
+            </tr>
+          `;
+
+          // Expandable detail row for macro & volatility insights
+          if (hasMacro) {
+            tableHtml += `
+              <tr id="macro-row-${fCode}" style="display: none; background: #fdfdfe;">
+                <td colspan="11" style="padding: 12px 18px; font-size: 12px; line-height: 1.65; border-left: 3px solid var(--color-primary); border-bottom: 1px solid var(--border-default);">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <strong style="color: var(--color-primary); font-size: 13px;">${escapeHtml(macroInfo.title)} · 宏观社会背景与波动前瞻</strong>
+                    <span class="badge ${macroInfo.badgeClass}">${escapeHtml(macroInfo.badge)}</span>
+                  </div>
+                  <div style="margin-bottom: 6px;">
+                    <strong style="color: var(--color-primary);">🏛️ 近期社会与宏观知识背景：</strong><br>
+                    ${escapeHtml(macroInfo.macro)}
+                  </div>
+                  <div style="margin-bottom: 6px;">
+                    <strong style="color: var(--color-warning);">🔮 未来 1~3 个月潜在波动与风险预测：</strong><br>
+                    ${escapeHtml(macroInfo.forecast)}
+                  </div>
+                  <div style="background: #ffffff; padding: 8px 12px; border-radius: var(--radius-sm); border-left: 3px solid var(--color-success); border: 1px solid var(--border-default);">
+                    <strong style="color: var(--color-success);">💡 投资实操应对建议：</strong><br>
+                    ${macroInfo.advice}
+                  </div>
+                </td>
+              </tr>
+            `;
+          }
+        }
+
+        // Parallel clones grid card
+        if (isClone && redundancyGrid) {
+          clonesHtml += `
+            <div class="clone-card">
+              <div class="clone-card-header">
+                <span style="font-weight: 700; color: var(--color-primary); font-family: var(--font-mono);">${fCode}</span>
+                <span class="badge badge-warning">纳指 100</span>
+              </div>
+              <div style="font-size: 13px; font-weight: 600; margin-bottom: 4px;">${fName}</div>
+              <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-secondary);">
+                <span>投入: ${fmtCurrency(f.cost)}</span>
+                <span class="num val-danger">${fmtPercent(pnlRate)}</span>
+              </div>
+            </div>
+          `;
+        }
+      });
+
+      tbody.innerHTML = tableHtml;
+      if (redundancyGrid && clonesHtml) redundancyGrid.innerHTML = clonesHtml;
+    }
+
+    function filterFunds(cat, btn) {
+      document.querySelectorAll(".filter-btn").forEach(el => el.classList.remove("active"));
+      if (btn) btn.classList.add("active");
+      renderFundsTable(cat);
+    }
+
+    // Align Macro Sector Mapping with Backend penetration.py
+    function mapMacroSectorJs(fund) {
+      if (!fund) return '其他分散资产';
+      const sec = (fund.sector || '').toLowerCase();
+      const cat = (fund.category || '').toLowerCase();
+      const name = (fund.name || '').toLowerCase();
+      const combined = `${sec} ${name} ${cat}`;
+
+      // 1. 防御底线 (纯债/现金/黄金) - 优先判定
+      const defensiveKeywords = ["纯债", "债券", "债基", "短债", "货币", "黄金", "避险", "现金", "固收", "偏债固收"];
+      if (defensiveKeywords.some(k => combined.includes(k))) {
+        return "防御底线 (纯债/现金/黄金)";
+      }
+
+      // 2. 核心蓝筹与核心资产
+      if (["蓝筹", "核心资产"].some(k => combined.includes(k))) {
+        return "核心资产/港股互联网";
+      }
+
+      // 3. 泛科技大类
+      const techKeywords = [
+        "科技", "半导体", "芯片", "纳指", "纳斯达克", "nasdaq", "美股科技",
+        "计算机", "算力", "软件", "电子", "消费电子", "人工智能", "ai", "互联网", "通信", "机器人", "高端装备", "信息", "创新前沿", "成长优选"
+      ];
+      if (techKeywords.some(k => combined.includes(k))) {
+        return "泛科技大类";
+      }
+
+      // 4. 医药与大健康
+      if (["医药", "医疗", "健康", "生物", "cxo", "药"].some(k => combined.includes(k))) {
+        return "医药与大健康";
+      }
+
+      // 5. 消费与白酒
+      if (["白酒", "酒", "消费", "食品", "饮料", "零售"].some(k => combined.includes(k))) {
+        return "消费与白酒";
+      }
+
+      // 6. 新能源与低碳
+      if (["新能源", "光伏", "锂电", "电池", "低碳", "环保", "储能"].some(k => combined.includes(k))) {
+        return "新能源与低碳";
+      }
+
+      // 7. 金融与高股息
+      if (["银行", "高股息", "红利", "证券", "保险", "金融"].some(k => combined.includes(k))) {
+        return "金融与高股息";
+      }
+
+      // 8. 公用事业与电力
+      if (["公用事业", "电力", "绿电", "核电", "电网"].some(k => combined.includes(k))) {
+        return "公用事业与电力";
+      }
+
+      // 9. 周期与军工安全
+      if (["军工", "国防", "安全", "有色", "煤炭", "钢铁", "化工"].some(k => combined.includes(k))) {
+        return "周期与军工安全";
+      }
+
+      // 10. 中盘与宽基
+      if (["500", "300", "1000", "50", "宽基", "指增"].some(k => combined.includes(k))) {
+        return "中盘与宽基";
+      }
+
+      return "其他分散资产";
+    }
+
+    function isDefensiveSectorJs(macroSector, fund) {
+      if (macroSector === "防御底线 (纯债/现金/黄金)") return true;
+      const combined = `${fund.sector || ''} ${fund.category || ''} ${fund.name || ''}`.toLowerCase();
+      const defensiveKeywords = ["纯债", "债券", "债基", "短债", "货币", "黄金", "避险", "现金", "固收", "防御底线", "偏债固收"];
+      return defensiveKeywords.some(k => combined.includes(k));
+    }
+
+    // Populate Simulator Select Dropdown and Dynamic Preset Chips
+    function initSimulatorDropdown() {
+      const select = document.getElementById("sim-fund-select");
+      const presetsContainer = document.getElementById("quick-presets-container");
+      if (!select || !PORTFOLIO_DATA.fund_list || PORTFOLIO_DATA.fund_list.length === 0) return;
+
+      let opts = "";
+      PORTFOLIO_DATA.fund_list.forEach(f => {
+        const pnlRate = f.pnl_rate !== undefined ? f.pnl_rate : ((f.market_value - f.cost) / (f.cost || 1));
+        const fCode = escapeHtml(f.code || '');
+        const fName = escapeHtml(f.name || '');
+        opts += `<option value="${fCode}">[${fCode}] ${fName} (浮亏: ${fmtPercent(pnlRate)})</option>`;
+      });
+      select.innerHTML = opts;
+
+      // Dynamically render realistic preset chips based on active portfolio
+      if (presetsContainer) {
+        const funds = PORTFOLIO_DATA.fund_list;
+        // 1. Worst tech fund (deep loss)
+        const deepLossTech = funds
+          .filter(f => mapMacroSectorJs(f) === '泛科技大类')
+          .sort((a, b) => {
+            const pa = a.pnl_rate !== undefined ? a.pnl_rate : ((a.market_value - a.cost) / (a.cost || 1));
+            const pb = b.pnl_rate !== undefined ? b.pnl_rate : ((b.market_value - b.cost) / (b.cost || 1));
+            return pa - pb;
+          })[0];
+
+        // 2. Clone / Index fund
+        const cloneFund = funds.find(f => (f.category && f.category.includes('纳指')) || f.clone_group_id || f.name.includes('纳斯达克') || f.name.includes('纳指'));
+
+        // 3. Defensive fund (bond/gold without deep loss)
+        const defFund = funds.find(f => {
+          const pnl = f.pnl_rate !== undefined ? f.pnl_rate : ((f.market_value - f.cost) / (f.cost || 1));
+          return isDefensiveSectorJs(mapMacroSectorJs(f), f) && pnl > -0.10;
+        }) || funds.find(f => isDefensiveSectorJs(mapMacroSectorJs(f), f));
+
+        // 4. Dividend / Value fund
+        const divFund = funds.find(f => (f.category && (f.category.includes('红利') || f.category.includes('高股息') || f.category.includes('银行'))) || f.name.includes('红利'));
+
+        let pChips = '<span style="font-size: 12px; color: var(--text-muted); align-self: center;">快捷模拟场景:</span>';
+        if (deepLossTech) {
+          const pnl = deepLossTech.pnl_rate !== undefined ? deepLossTech.pnl_rate : ((deepLossTech.market_value - deepLossTech.cost) / (deepLossTech.cost || 1));
+          pChips += `<button type="button" class="preset-chip" onclick="applyPreset('${escapeHtml(deepLossTech.code)}', 5000)">🔴 加仓 ${escapeHtml(deepLossTech.name.substring(0, 10))} ¥5,000 (浮亏 ${fmtPercent(pnl)})</button>`;
+        }
+        if (cloneFund) {
+          pChips += `<button type="button" class="preset-chip" onclick="applyPreset('${escapeHtml(cloneFund.code)}', 3000)">🟠 加仓 ${escapeHtml(cloneFund.name.substring(0, 10))} ¥3,000 (并联标的)</button>`;
+        }
+        if (defFund) {
+          pChips += `<button type="button" class="preset-chip" onclick="applyPreset('${escapeHtml(defFund.code)}', 10000)">🟢 加仓 ${escapeHtml(defFund.name.substring(0, 10))} ¥10,000 (防守资产稀释)</button>`;
+        }
+        if (divFund) {
+          pChips += `<button type="button" class="preset-chip" onclick="applyPreset('${escapeHtml(divFund.code)}', 5000)">🟢 加仓 ${escapeHtml(divFund.name.substring(0, 10))} ¥5,000 (红利防御)</button>`;
+        }
+        presetsContainer.innerHTML = pChips;
+      }
+    }
+
+    function applyPreset(code, amount) {
+      const select = document.getElementById("sim-fund-select");
+      const amountInput = document.getElementById("sim-amount-input");
+      if (select) select.value = code;
+      if (amountInput) amountInput.value = amount;
+      runSimulation();
+    }
+
+    // Live Pre-Trade Circuit Breaker Simulation Engine
+    function runSimulation() {
+      const select = document.getElementById("sim-fund-select");
+      const amountInput = document.getElementById("sim-amount-input");
+      const resultCard = document.getElementById("sim-result-card");
+      if (!select || !amountInput || !resultCard) return;
+
+      const code = select.value;
+      const amount = parseFloat(amountInput.value) || 0;
+      if (amount <= 0) return;
+
+      const fund = PORTFOLIO_DATA.fund_list.find(f => f.code === code) || PORTFOLIO_DATA.fund_list[0];
+      if (!fund) return;
+      const pnlRate = fund.pnl_rate !== undefined ? fund.pnl_rate : ((fund.market_value - fund.cost) / (fund.cost || 1));
+
+      const summary = PORTFOLIO_DATA.portfolio_summary || {};
+      const currentTotalVal = summary.total_market_value !== undefined ? summary.total_market_value : (summary.total_value || 0.0);
+      const currentTechPct = (summary.sector_exposures && summary.sector_exposures["泛科技大类"] !== undefined) ? summary.sector_exposures["泛科技大类"] : 0.0;
+      const currentTechVal = (currentTechPct / 100) * currentTotalVal;
+
+      const fundMacro = mapMacroSectorJs(fund);
+      const isTechTarget = (fundMacro === '泛科技大类');
+      const isDefensive = isDefensiveSectorJs(fundMacro, fund);
+
+      // Calculate new exposures after adding cash
+      const newTotalVal = currentTotalVal + amount;
+      const newTechVal = currentTechVal + (isTechTarget ? amount : 0);
+      const newTechPct = newTotalVal > 0 ? (newTechVal / newTotalVal) * 100 : 0.0;
+
+      // Check Breaker Rules (Strictly synchronized with backend circuit_breaker.py)
+      const HARD_CAP_MACRO = 50.0;
+      const LOSS_CHASING_THRESHOLD = -0.10; // -10.0%
+
+      // P0 Macro Tech Hard Cap: Triggered if pre or post exposure >= 50.0%
+      const isMacroOverweight = isTechTarget && (currentTechPct >= HARD_CAP_MACRO || newTechPct >= HARD_CAP_MACRO);
+
+      // P1 Impulse Loss-Chasing: Triggered if target asset has severe floating loss <= -10.0% (across all sectors)
+      const isLossChasing = (pnlRate <= LOSS_CHASING_THRESHOLD);
+
+      // Order is intercepted if either P0 Macro Cap or P1 Loss Freeze is tripped
+      const isIntercepted = isMacroOverweight || isLossChasing;
+
+      resultCard.classList.remove("sim-result-danger", "sim-result-safe");
+      resultCard.classList.add("show");
+
+      const header = document.getElementById("sim-result-header");
+      const mPnl = document.getElementById("sim-m-pnl");
+      const mCurrTech = document.getElementById("sim-m-curr-tech");
+      const mNewTech = document.getElementById("sim-m-new-tech");
+      const mDecision = document.getElementById("sim-m-decision");
+      const advice = document.getElementById("sim-result-advice");
+
+      mPnl.textContent = fmtPercent(pnlRate);
+      mCurrTech.textContent = currentTechPct.toFixed(2) + "%";
+      mNewTech.textContent = newTechPct.toFixed(2) + "%";
+
+      if (isIntercepted) {
+        resultCard.classList.add("sim-result-danger");
+        header.innerHTML = `<span style="font-size: 20px;">🛑</span> <span class="val-danger">交易拦截：触发防冲动加仓硬顶熔断 (CRITICAL INTERCEPT)</span>`;
+        mDecision.innerHTML = `<span class="val-danger">🔴 强制拦截拒绝</span>`;
+
+        let reasonHtml = "";
+        if (isMacroOverweight && isLossChasing) {
+          reasonHtml = `⚠️ <strong>双重熔断拦截</strong>：该标的所属【泛科技大类】加仓后总敞口将达 <span class="num">${newTechPct.toFixed(2)}%</span>（硬顶 50.0%），且标的当前浮亏达 <span class="num">${fmtPercent(pnlRate)}</span>（触碰 -10.0% 逆势补仓冷冻线）。此操作属于典型『越跌越补、深陷泥潭』认知偏差！`;
+        } else if (isMacroOverweight) {
+          reasonHtml = `⚠️ <strong>P0 行业硬顶拦截</strong>：组合【泛科技大类】真实穿透敞口已达 <span class="num">${currentTechPct.toFixed(2)}%</span>。加仓 ¥${escapeHtml(amount.toLocaleString())} 后敞口将达 <span class="num">${newTechPct.toFixed(2)}%</span>，严重击穿 50.0% 宏观硬顶！即便单只标的浮亏未达 -10%，也严禁向超标板块继续堆积风险暴露。`;
+        } else {
+          reasonHtml = `⚠️ <strong>P1 防冲动追跌冷冻</strong>：拟加仓标的【${escapeHtml(fund.name)}】当前浮亏已达 <span class="num">${fmtPercent(pnlRate)}</span>，触碰 -10.0% 逆势补仓冷冻线。系统已启动情绪防冲动闸口，阻断非理性摊薄成本与徒手接飞刀！`;
+        }
+
+        advice.innerHTML = `
+          <div style="font-weight: 700; color: #cf222e; margin-bottom: 6px;">
+            ${reasonHtml}
+          </div>
+          <div>
+            系统已启动 <strong>48 小时强制冷静期</strong>。建议关闭交易软件，切忌徒手接飞刀；若确有闲置资金需要配置，建议转投【防御底线 (纯债/现金/黄金)】或【红利低波】以稀释权益波动风险。
+          </div>
+        `;
+      } else if (isDefensive) {
+        resultCard.classList.add("sim-result-safe");
+        header.innerHTML = `<span style="font-size: 20px;">🟢</span> <span class="val-success">风控通过：健康再平衡配置 (ORDER APPROVED)</span>`;
+        mDecision.innerHTML = `<span class="val-success">🟢 核准执行</span>`;
+        advice.innerHTML = `
+          <div style="font-weight: 700; color: #1a7f37; margin-bottom: 6px;">
+            ✅ 优化评估：加仓防御型资产成功稀释泛科技高风险敞口！
+          </div>
+          <div>
+            加仓 ¥${escapeHtml(amount.toLocaleString())} 防御资产后，组合泛科技总敞口从 <strong class="num">${currentTechPct.toFixed(2)}%</strong> 有效回落至 <strong class="num">${newTechPct.toFixed(2)}%</strong>（下降 ${(currentTechPct - newTechPct).toFixed(2)}%），大幅增强了应对板块周期波动的安全垫。
+          </div>
+        `;
+      } else {
+        resultCard.classList.add("sim-result-safe");
+        header.innerHTML = `<span style="font-size: 20px;">🟡</span> <span class="val-warning">风控提示：常规买入通过 (ORDER PERMITTED)</span>`;
+        mDecision.innerHTML = `<span class="val-warning">🟡 条件允许</span>`;
+        advice.innerHTML = `
+          <div style="font-weight: 700; color: #9a6700; margin-bottom: 6px;">
+            标的未触碰冲动追跌拦截阈值 (浮亏: ${fmtPercent(pnlRate)} > -10.0%)。
+          </div>
+          <div>
+            加仓后泛科技敞口为 <strong class="num">${newTechPct.toFixed(2)}%</strong>（低于 50.0% 硬顶）。准予执行，建议保持对整体行业集中度与宏观流动性周期的关注。
+          </div>
+        `;
+      }
+    }
+
+    // Cooling-off Countdown Timer
+    let countdownSecs = 48 * 3600 - 2;
+    function tickCountdown() {
+      if (countdownSecs > 0) {
+        countdownSecs--;
+        const hours = Math.floor(countdownSecs / 3600);
+        const mins = Math.floor((countdownSecs % 3600) / 60);
+        const secs = countdownSecs % 60;
+        const pad = (n) => String(n).padStart(2, '0');
+        const str = `${pad(hours)}:${pad(mins)}:${pad(secs)}`;
+        const clockEl = document.getElementById("countdown-clock");
+        if (clockEl) clockEl.textContent = str;
+      }
+    }
+    setInterval(tickCountdown, 1000);
+
+    // Active Circuit Breakers Alerts Render
+    function renderBreakerAlerts() {
+      const container = document.getElementById("breaker-alerts-list");
+      if (!container || !PORTFOLIO_DATA.breaker_status) return;
+
+      const msgs = PORTFOLIO_DATA.breaker_status.intercept_messages || [];
+      let html = "";
+
+      msgs.forEach(m => {
+        const isP0 = m.severity === 'P0' || (m.code && m.code.startsWith('P0'));
+        const isP1 = m.severity === 'P1' || (m.code && m.code.startsWith('P1'));
+        const borderCol = isP0 ? 'var(--color-danger)' : (isP1 ? 'var(--color-warning)' : 'var(--border-default)');
+        const badgeCol = isP0 ? 'badge-danger' : (isP1 ? 'badge-warning' : 'badge-neutral');
+
+        html += `
+          <div style="background: var(--bg-subtle); border-left: 4px solid ${borderCol}; padding: 14px 18px; border-radius: var(--radius-sm);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <span style="font-size: 14px; font-weight: 700; color: ${isP0 ? '#cf222e' : (isP1 ? '#9a6700' : '#1f2328')};">
+                ${isP0 ? '🔴' : (isP1 ? '🟠' : '🟡')} ${escapeHtml(m.title)}
+              </span>
+              <span class="badge ${badgeCol}">${escapeHtml(m.severity || 'ALERT')}</span>
+            </div>
+            <div style="font-size: 13px; color: var(--text-primary); margin-bottom: 6px; line-height: 1.6;">
+              ${escapeHtml(m.detail)}
+            </div>
+            <div style="font-size: 12px; color: var(--text-secondary); background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius: 4px;">
+              💡 <strong>风控处置指引</strong>：${escapeHtml(m.action)}
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    // Dynamic Top KPI Cards & Risk Gauges
+    function renderSummaryKPIs() {
+      const summary = PORTFOLIO_DATA.portfolio_summary || {};
+      const totalCost = summary.total_cost !== undefined ? summary.total_cost : 0.0;
+      const totalVal = summary.total_market_value !== undefined ? summary.total_market_value : 0.0;
+      const pnl = summary.floating_pnl !== undefined ? summary.floating_pnl : (summary.total_pnl !== undefined ? summary.total_pnl : (totalVal - totalCost));
+      const pnlRate = summary.floating_pnl_rate !== undefined ? summary.floating_pnl_rate : (summary.total_pnl_rate !== undefined ? summary.total_pnl_rate : (totalCost ? pnl / totalCost : 0.0));
+      const techPct = (summary.sector_exposures && summary.sector_exposures["泛科技大类"] !== undefined) ? summary.sector_exposures["泛科技大类"] : 0.0;
+      const usTechPct = (summary.sector_exposures && summary.sector_exposures["海外美股科技"] !== undefined) ? summary.sector_exposures["海外美股科技"] : 0.0;
+      const semiPct = (summary.sector_exposures && summary.sector_exposures["A股半导体与制造"] !== undefined) ? summary.sector_exposures["A股半导体与制造"] : 0.0;
+
+      // Update KPI cards
+      const elCost = document.getElementById("kpi-total-cost");
+      const elVal = document.getElementById("kpi-total-value");
+      const elPnl = document.getElementById("kpi-total-pnl");
+      const elTech = document.getElementById("kpi-tech-exposure");
+      const elClones = document.getElementById("kpi-clones-count");
+
+      if (elCost) elCost.textContent = fmtCurrency(totalCost);
+      if (elVal) elVal.textContent = fmtCurrency(totalVal);
+      if (elPnl) {
+        elPnl.textContent = `${pnl < 0 ? '-' : ''}¥${Math.abs(pnl).toLocaleString('zh-CN', {minimumFractionDigits: 2, maximumFractionDigits: 2})} (${fmtPercent(pnlRate)})`;
+        elPnl.className = `card-value num ${pnl < 0 ? 'val-danger' : 'val-success'}`;
+      }
+      if (elTech) {
+        elTech.textContent = techPct.toFixed(2) + "%";
+        elTech.className = `card-value num ${techPct >= 50.0 ? 'val-danger' : (techPct >= 40.0 ? 'val-warning' : 'val-primary')}`;
+      }
+      if (elClones && PORTFOLIO_DATA.fund_list) {
+        const clones = PORTFOLIO_DATA.fund_list.filter(f => !!f.clone_group_id || (f.category && f.category.includes('并联')));
+        if (clones.length > 0) {
+          const cloneVal = clones.reduce((a, c) => a + (c.market_value || 0), 0);
+          elClones.textContent = `${clones.length} 只并联 (${fmtCurrency(cloneVal)})`;
+        }
+      }
+
+      // Update Top Banner
+      const elBanner = document.getElementById("circuit-breaker-banner");
+      const bannerTech = document.getElementById("banner-tech-pct");
+      const bannerExcess = document.getElementById("banner-tech-excess");
+      const bannerPnl = document.getElementById("banner-pnl-rate");
+      const isTripped = (PORTFOLIO_DATA.breaker_status && PORTFOLIO_DATA.breaker_status.is_tripped) || techPct >= 50.0;
+
+      if (bannerTech) bannerTech.textContent = techPct.toFixed(2) + "%";
+      if (bannerExcess) bannerExcess.textContent = `+${Math.max(0, techPct - 50.0).toFixed(2)}%`;
+      if (bannerPnl) bannerPnl.textContent = fmtPercent(pnlRate);
+
+      if (elBanner && !isTripped) {
+        elBanner.style.borderLeftColor = "var(--color-success)";
+        elBanner.style.background = "rgba(63, 185, 80, 0.1)";
+        const bTitle = elBanner.querySelector(".banner-title");
+        if (bTitle) bTitle.innerHTML = `<span>🟢 全局风控正常 (NORMAL RISK STATUS)</span> <span class="badge badge-success">受控达标</span>`;
+        const bDesc = document.getElementById("banner-description");
+        if (bDesc) bDesc.textContent = `组合泛科技真实穿透敞口为 ${techPct.toFixed(2)}%，未触碰 50.0% 宏观硬顶与细分行业上限。各项风控指标均在安全区间。`;
+      }
+
+      // Update Gauges
+      const elGaugeMacro = document.getElementById("gauge-macro-val");
+      const elBarMacro = document.getElementById("gauge-macro-bar");
+      if (elGaugeMacro) elGaugeMacro.textContent = techPct.toFixed(2) + "%";
+      if (elBarMacro) elBarMacro.style.width = Math.min(100, Math.max(0, techPct)) + "%";
+
+      const elGaugeUS = document.getElementById("gauge-us-val");
+      const elBarUS = document.getElementById("gauge-us-bar");
+      if (elGaugeUS) elGaugeUS.textContent = usTechPct.toFixed(2) + "%";
+      if (elBarUS) elBarUS.style.width = Math.min(100, Math.max(0, usTechPct)) + "%";
+
+      const elGaugeSemi = document.getElementById("gauge-semi-val");
+      const elBarSemi = document.getElementById("gauge-semi-bar");
+      if (elGaugeSemi) elGaugeSemi.textContent = semiPct.toFixed(2) + "%";
+      if (elBarSemi) elBarSemi.style.width = Math.min(100, Math.max(0, semiPct)) + "%";
+    }
+
+    // Initialize all components on DOM ready
+    document.addEventListener("DOMContentLoaded", function() {
+      renderSummaryKPIs();
+      renderTopHoldingsBars();
+      renderDonutChart();
+      renderFundsTable('ALL');
+      initSimulatorDropdown();
+      renderBreakerAlerts();
+    });
+  </script>
+</body>
+</html>

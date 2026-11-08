@@ -1,0 +1,671 @@
+{
+  "portfolio_name": "Ethan 真实持仓实测组合",
+  "generated_at": "2026-11-08T15:20:00Z",
+  "total_cost": 22748.63,
+  "total_market_value": 20386.25,
+  "total_pnl": -2362.38,
+  "total_pnl_rate": -0.1038,
+  "funds": [
+    {
+      "code": "001000",
+      "name": "建信上海金ETF联接C",
+      "category": "黄金避险",
+      "sector": "黄金/贵金属",
+      "cost": 4780.68,
+      "market_value": 4920.02,
+      "pnl": 139.34,
+      "pnl_rate": 0.0291,
+      "top_holdings": []
+    },
+    {
+      "code": "001001",
+      "name": "华泰柏瑞中证红利低波动ETF联接C",
+      "category": "红利低波",
+      "sector": "核心高股息",
+      "cost": 2916.91,
+      "market_value": 3069.32,
+      "pnl": 152.41,
+      "pnl_rate": 0.0523,
+      "top_holdings": [
+        {
+          "name": "中国神华",
+          "code": "601088",
+          "weight": 0.045,
+          "market": "A股",
+          "sector": "高股息煤炭"
+        },
+        {
+          "name": "陕西煤业",
+          "code": "601225",
+          "weight": 0.04,
+          "market": "A股",
+          "sector": "高股息煤炭"
+        },
+        {
+          "name": "工商银行",
+          "code": "601398",
+          "weight": 0.038,
+          "market": "A股",
+          "sector": "国有大行"
+        }
+      ]
+    },
+    {
+      "code": "012525",
+      "name": "融通稳信增益6个月持有期混合C",
+      "category": "稳健类/固收+",
+      "sector": "偏债固收",
+      "cost": 2900.00,
+      "market_value": 2468.02,
+      "pnl": -431.98,
+      "pnl_rate": -0.1543,
+      "top_holdings": []
+    },
+    {
+      "code": "001003",
+      "name": "建信新兴市场优选混合(QDII)C",
+      "category": "QDII海外",
+      "sector": "新兴市场",
+      "cost": 1859.08,
+      "market_value": 1675.47,
+      "pnl": -183.61,
+      "pnl_rate": -0.0988,
+      "top_holdings": []
+    },
+    {
+      "code": "001004",
+      "name": "广发纳斯达克100 ETF联接A",
+      "category": "QDII并联纳指",
+      "sector": "美股科技(纳斯达克100)",
+      "cost": 1199.77,
+      "market_value": 1199.14,
+      "pnl": -0.63,
+      "pnl_rate": -0.0005,
+      "top_holdings": [
+        {
+          "name": "NVDA",
+          "code": "NVDA",
+          "weight": 0.088,
+          "market": "美股",
+          "sector": "算力芯片"
+        },
+        {
+          "name": "MSFT",
+          "code": "MSFT",
+          "weight": 0.082,
+          "market": "美股",
+          "sector": "云计算与AI"
+        },
+        {
+          "name": "AAPL",
+          "code": "AAPL",
+          "weight": 0.076,
+          "market": "美股",
+          "sector": "消费电子"
+        },
+        {
+          "name": "AMZN",
+          "code": "AMZN",
+          "weight": 0.051,
+          "market": "美股",
+          "sector": "电商与云"
+        },
+        {
+          "name": "GOOGL",
+          "code": "GOOGL",
+          "weight": 0.05,
+          "market": "美股",
+          "sector": "搜索与AI"
+        }
+      ]
+    },
+    {
+      "code": "001005",
+      "name": "景顺长城纳斯达克科技市值加权",
+      "category": "QDII美股科技",
+      "sector": "美股科技(纳斯达克科技)",
+      "cost": 864.0,
+      "market_value": 743.39,
+      "pnl": -120.61,
+      "pnl_rate": -0.1396,
+      "top_holdings": [
+        {
+          "name": "NVDA",
+          "code": "NVDA",
+          "weight": 0.088,
+          "market": "美股",
+          "sector": "算力芯片"
+        },
+        {
+          "name": "MSFT",
+          "code": "MSFT",
+          "weight": 0.082,
+          "market": "美股",
+          "sector": "云计算与AI"
+        },
+        {
+          "name": "AAPL",
+          "code": "AAPL",
+          "weight": 0.076,
+          "market": "美股",
+          "sector": "消费电子"
+        },
+        {
+          "name": "AMZN",
+          "code": "AMZN",
+          "weight": 0.051,
+          "market": "美股",
+          "sector": "电商与云"
+        },
+        {
+          "name": "GOOGL",
+          "code": "GOOGL",
+          "weight": 0.05,
+          "market": "美股",
+          "sector": "搜索与AI"
+        }
+      ]
+    },
+    {
+      "code": "001006",
+      "name": "易方达全球成长精选混合(QDII)C",
+      "category": "QDII美股科技",
+      "sector": "美股科技/全球成长",
+      "cost": 600.0,
+      "market_value": 585.67,
+      "pnl": -14.33,
+      "pnl_rate": -0.0239,
+      "top_holdings": [
+        {
+          "name": "NVDA",
+          "code": "NVDA",
+          "weight": 0.088,
+          "market": "美股",
+          "sector": "算力芯片"
+        },
+        {
+          "name": "MSFT",
+          "code": "MSFT",
+          "weight": 0.082,
+          "market": "美股",
+          "sector": "云计算与AI"
+        },
+        {
+          "name": "AAPL",
+          "code": "AAPL",
+          "weight": 0.076,
+          "market": "美股",
+          "sector": "消费电子"
+        },
+        {
+          "name": "AMZN",
+          "code": "AMZN",
+          "weight": 0.051,
+          "market": "美股",
+          "sector": "电商与云"
+        },
+        {
+          "name": "GOOGL",
+          "code": "GOOGL",
+          "weight": 0.05,
+          "market": "美股",
+          "sector": "搜索与AI"
+        }
+      ]
+    },
+    {
+      "code": "001007",
+      "name": "万家纳斯达克100指数(QDII)A",
+      "category": "QDII并联纳指",
+      "sector": "美股科技(纳斯达克100)",
+      "cost": 569.11,
+      "market_value": 539.99,
+      "pnl": -29.12,
+      "pnl_rate": -0.0512,
+      "top_holdings": [
+        {
+          "name": "NVDA",
+          "code": "NVDA",
+          "weight": 0.088,
+          "market": "美股",
+          "sector": "算力芯片"
+        },
+        {
+          "name": "MSFT",
+          "code": "MSFT",
+          "weight": 0.082,
+          "market": "美股",
+          "sector": "云计算与AI"
+        },
+        {
+          "name": "AAPL",
+          "code": "AAPL",
+          "weight": 0.076,
+          "market": "美股",
+          "sector": "消费电子"
+        },
+        {
+          "name": "AMZN",
+          "code": "AMZN",
+          "weight": 0.051,
+          "market": "美股",
+          "sector": "电商与云"
+        },
+        {
+          "name": "GOOGL",
+          "code": "GOOGL",
+          "weight": 0.05,
+          "market": "美股",
+          "sector": "搜索与AI"
+        }
+      ]
+    },
+    {
+      "code": "001008",
+      "name": "华夏全球科技先锋混合(QDII)C",
+      "category": "QDII美股科技",
+      "sector": "美股科技/全球科技",
+      "cost": 892.09,
+      "market_value": 537.11,
+      "pnl": -354.98,
+      "pnl_rate": -0.3979,
+      "top_holdings": [
+        {
+          "name": "NVDA",
+          "code": "NVDA",
+          "weight": 0.088,
+          "market": "美股",
+          "sector": "算力芯片"
+        },
+        {
+          "name": "MSFT",
+          "code": "MSFT",
+          "weight": 0.082,
+          "market": "美股",
+          "sector": "云计算与AI"
+        },
+        {
+          "name": "AAPL",
+          "code": "AAPL",
+          "weight": 0.076,
+          "market": "美股",
+          "sector": "消费电子"
+        },
+        {
+          "name": "AMZN",
+          "code": "AMZN",
+          "weight": 0.051,
+          "market": "美股",
+          "sector": "电商与云"
+        },
+        {
+          "name": "GOOGL",
+          "code": "GOOGL",
+          "weight": 0.05,
+          "market": "美股",
+          "sector": "搜索与AI"
+        }
+      ]
+    },
+    {
+      "code": "001009",
+      "name": "银华中证光伏产业ETF联接C",
+      "category": "新能源",
+      "sector": "新能源/光伏",
+      "cost": 621.01,
+      "market_value": 529.22,
+      "pnl": -91.79,
+      "pnl_rate": -0.1478,
+      "top_holdings": []
+    },
+    {
+      "code": "001010",
+      "name": "前海开源沪港深乐享生活灵活配置",
+      "category": "泛消费",
+      "sector": "泛消费/港股互联网",
+      "cost": 866.48,
+      "market_value": 514.12,
+      "pnl": -352.36,
+      "pnl_rate": -0.4067,
+      "top_holdings": []
+    },
+    {
+      "code": "001011",
+      "name": "银华中证5G通信主题ETF联接C",
+      "category": "科技通信",
+      "sector": "5G通信/电子信息",
+      "cost": 680.55,
+      "market_value": 443.41,
+      "pnl": -237.14,
+      "pnl_rate": -0.3485,
+      "top_holdings": []
+    },
+    {
+      "code": "001012",
+      "name": "易方达黄金ETF联接C",
+      "category": "黄金避险",
+      "sector": "黄金/贵金属",
+      "cost": 473.8,
+      "market_value": 410.36,
+      "pnl": -63.44,
+      "pnl_rate": -0.1339,
+      "top_holdings": []
+    },
+    {
+      "code": "001013",
+      "name": "华夏创新前沿主题混合C",
+      "category": "科技制造",
+      "sector": "科技制造/高端装备",
+      "cost": 638.55,
+      "market_value": 387.73,
+      "pnl": -250.82,
+      "pnl_rate": -0.3928,
+      "top_holdings": []
+    },
+    {
+      "code": "001014",
+      "name": "易方达黄金ETF联接C-2",
+      "category": "黄金避险",
+      "sector": "黄金/贵金属",
+      "cost": 428.51,
+      "market_value": 379.64,
+      "pnl": -48.87,
+      "pnl_rate": -0.114,
+      "top_holdings": []
+    },
+    {
+      "code": "001015",
+      "name": "银华中证半导体芯片ETF联接C",
+      "category": "A股芯片",
+      "sector": "半导体/集成电路",
+      "cost": 429.96,
+      "market_value": 366.61,
+      "pnl": -63.35,
+      "pnl_rate": -0.1473,
+      "top_holdings": [
+        {
+          "name": "北方华创",
+          "code": "002371",
+          "weight": 0.105,
+          "market": "A股",
+          "sector": "半导体设备"
+        },
+        {
+          "name": "中微公司",
+          "code": "688012",
+          "weight": 0.082,
+          "market": "A股",
+          "sector": "半导体设备"
+        },
+        {
+          "name": "中芯国际",
+          "code": "688981",
+          "weight": 0.075,
+          "market": "A股",
+          "sector": "晶圆代工"
+        },
+        {
+          "name": "韦尔股份",
+          "code": "603501",
+          "weight": 0.061,
+          "market": "A股",
+          "sector": "CIS芯片"
+        }
+      ]
+    },
+    {
+      "code": "001016",
+      "name": "华安纳斯达克100指数(QDII)A",
+      "category": "QDII并联纳指",
+      "sector": "美股科技(纳斯达克100)",
+      "cost": 390.01,
+      "market_value": 363.92,
+      "pnl": -26.09,
+      "pnl_rate": -0.0669,
+      "top_holdings": [
+        {
+          "name": "NVDA",
+          "code": "NVDA",
+          "weight": 0.088,
+          "market": "美股",
+          "sector": "算力芯片"
+        },
+        {
+          "name": "MSFT",
+          "code": "MSFT",
+          "weight": 0.082,
+          "market": "美股",
+          "sector": "云计算与AI"
+        },
+        {
+          "name": "AAPL",
+          "code": "AAPL",
+          "weight": 0.076,
+          "market": "美股",
+          "sector": "消费电子"
+        },
+        {
+          "name": "AMZN",
+          "code": "AMZN",
+          "weight": 0.051,
+          "market": "美股",
+          "sector": "电商与云"
+        },
+        {
+          "name": "GOOGL",
+          "code": "GOOGL",
+          "weight": 0.05,
+          "market": "美股",
+          "sector": "搜索与AI"
+        }
+      ]
+    },
+    {
+      "code": "001017",
+      "name": "易方达恒生科技ETF联接(QDII)A",
+      "category": "港股科技",
+      "sector": "港股互联网(恒生科技)",
+      "cost": 445.0,
+      "market_value": 351.79,
+      "pnl": -93.21,
+      "pnl_rate": -0.2095,
+      "top_holdings": []
+    },
+    {
+      "code": "001018",
+      "name": "南方纳斯达克100指数(QDII)C",
+      "category": "QDII并联纳指",
+      "sector": "美股科技(纳斯达克100)",
+      "cost": 295.0,
+      "market_value": 279.34,
+      "pnl": -15.66,
+      "pnl_rate": -0.0531,
+      "top_holdings": [
+        {
+          "name": "NVDA",
+          "code": "NVDA",
+          "weight": 0.088,
+          "market": "美股",
+          "sector": "算力芯片"
+        },
+        {
+          "name": "MSFT",
+          "code": "MSFT",
+          "weight": 0.082,
+          "market": "美股",
+          "sector": "云计算与AI"
+        },
+        {
+          "name": "AAPL",
+          "code": "AAPL",
+          "weight": 0.076,
+          "market": "美股",
+          "sector": "消费电子"
+        },
+        {
+          "name": "AMZN",
+          "code": "AMZN",
+          "weight": 0.051,
+          "market": "美股",
+          "sector": "电商与云"
+        },
+        {
+          "name": "GOOGL",
+          "code": "GOOGL",
+          "weight": 0.05,
+          "market": "美股",
+          "sector": "搜索与AI"
+        }
+      ]
+    },
+    {
+      "code": "001019",
+      "name": "东方人工智能主题混合C",
+      "category": "人工智能",
+      "sector": "人工智能/AI应用",
+      "cost": 253.98,
+      "market_value": 161.09,
+      "pnl": -92.89,
+      "pnl_rate": -0.3657,
+      "top_holdings": []
+    },
+    {
+      "code": "001020",
+      "name": "永赢高端装备智选混合C",
+      "category": "科技制造",
+      "sector": "科技制造/高端装备",
+      "cost": 169.79,
+      "market_value": 118.82,
+      "pnl": -50.97,
+      "pnl_rate": -0.3002,
+      "top_holdings": []
+    },
+    {
+      "code": "001021",
+      "name": "申万宏源上海金ETF联接C",
+      "category": "黄金避险",
+      "sector": "黄金/贵金属",
+      "cost": 124.99,
+      "market_value": 109.59,
+      "pnl": -15.4,
+      "pnl_rate": -0.1232,
+      "top_holdings": []
+    },
+    {
+      "code": "001022",
+      "name": "财通成长优选混合C",
+      "category": "科技成长",
+      "sector": "科技/小盘成长",
+      "cost": 200.0,
+      "market_value": 96.0,
+      "pnl": -104.0,
+      "pnl_rate": -0.52,
+      "top_holdings": []
+    },
+    {
+      "code": "001023",
+      "name": "嘉实中证机器人ETF联接C",
+      "category": "人工智能",
+      "sector": "机器人/智能制造",
+      "cost": 63.15,
+      "market_value": 54.66,
+      "pnl": -8.49,
+      "pnl_rate": -0.1344,
+      "top_holdings": []
+    },
+    {
+      "code": "001024",
+      "name": "华安纳斯达克100ETF联接C",
+      "category": "QDII并联纳指",
+      "sector": "美股科技(纳斯达克100)",
+      "cost": 55.0,
+      "market_value": 51.82,
+      "pnl": -3.18,
+      "pnl_rate": -0.0578,
+      "top_holdings": [
+        {
+          "name": "NVDA",
+          "code": "NVDA",
+          "weight": 0.088,
+          "market": "美股",
+          "sector": "算力芯片"
+        },
+        {
+          "name": "MSFT",
+          "code": "MSFT",
+          "weight": 0.082,
+          "market": "美股",
+          "sector": "云计算与AI"
+        },
+        {
+          "name": "AAPL",
+          "code": "AAPL",
+          "weight": 0.076,
+          "market": "美股",
+          "sector": "消费电子"
+        },
+        {
+          "name": "AMZN",
+          "code": "AMZN",
+          "weight": 0.051,
+          "market": "美股",
+          "sector": "电商与云"
+        },
+        {
+          "name": "GOOGL",
+          "code": "GOOGL",
+          "weight": 0.05,
+          "market": "美股",
+          "sector": "搜索与AI"
+        }
+      ]
+    },
+    {
+      "code": "001025",
+      "name": "日兴全球科技互联混合(QDII)",
+      "category": "QDII美股科技",
+      "sector": "美股科技/全球科技",
+      "cost": 30.2,
+      "market_value": 29.0,
+      "pnl": -1.2,
+      "pnl_rate": -0.0397,
+      "top_holdings": [
+        {
+          "name": "NVDA",
+          "code": "NVDA",
+          "weight": 0.088,
+          "market": "美股",
+          "sector": "算力芯片"
+        },
+        {
+          "name": "MSFT",
+          "code": "MSFT",
+          "weight": 0.082,
+          "market": "美股",
+          "sector": "云计算与AI"
+        },
+        {
+          "name": "AAPL",
+          "code": "AAPL",
+          "weight": 0.076,
+          "market": "美股",
+          "sector": "消费电子"
+        },
+        {
+          "name": "AMZN",
+          "code": "AMZN",
+          "weight": 0.051,
+          "market": "美股",
+          "sector": "电商与云"
+        },
+        {
+          "name": "GOOGL",
+          "code": "GOOGL",
+          "weight": 0.05,
+          "market": "美股",
+          "sector": "搜索与AI"
+        }
+      ]
+    }
+  ]
+}

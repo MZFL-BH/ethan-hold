@@ -1,0 +1,1177 @@
+{
+  "portfolio_name": "Ethan-Hold 25只基金经典测试组合",
+  "generated_at": "2026-11-08T03:00:00Z",
+  "total_cost": 100000.0,
+  "total_market_value": 87000.0,
+  "total_pnl": -13000.0,
+  "total_pnl_rate": -0.13,
+  "circuit_breaker": {
+    "macro_tech_cap": 0.5,
+    "sub_sector_cap": 0.35,
+    "single_stock_cap": 0.15,
+    "current_macro_tech_exposure": 0.6556,
+    "status": "CRITICAL_CIRCUIT_BREAKER_TRIGGERED",
+    "cooling_off_hours": 48
+  },
+  "funds": [
+    {
+      "code": "000055",
+      "name": "广发纳斯达克100ETF联接A",
+      "category": "QDII并联纳指",
+      "sector": "海外美股科技",
+      "cost": 6000.0,
+      "market_value": 5400.0,
+      "pnl": -600.0,
+      "pnl_rate": -0.1,
+      "clone_group_id": "CLONE_QDII_NDX100",
+      "top_holdings": [
+        {
+          "name": "NVDA",
+          "code": "NVDA",
+          "full_name": "英伟达",
+          "weight": 0.088,
+          "market": "美股",
+          "sector": "AI算力芯片与GPU"
+        },
+        {
+          "name": "AAPL",
+          "code": "AAPL",
+          "full_name": "苹果",
+          "weight": 0.082,
+          "market": "美股",
+          "sector": "消费电子与iOS生态"
+        },
+        {
+          "name": "MSFT",
+          "code": "MSFT",
+          "full_name": "微软",
+          "weight": 0.078,
+          "market": "美股",
+          "sector": "软件与Azure云计算"
+        },
+        {
+          "name": "AMZN",
+          "code": "AMZN",
+          "full_name": "亚马逊",
+          "weight": 0.052,
+          "market": "美股",
+          "sector": "电商与AWS云计算"
+        },
+        {
+          "name": "META",
+          "code": "META",
+          "full_name": "Meta",
+          "weight": 0.048,
+          "market": "美股",
+          "sector": "社交媒体与开源AI"
+        },
+        {
+          "name": "GOOGL",
+          "code": "GOOGL",
+          "full_name": "谷歌",
+          "weight": 0.045,
+          "market": "美股",
+          "sector": "搜索与Google Cloud"
+        },
+        {
+          "name": "AVGO",
+          "code": "AVGO",
+          "full_name": "博通",
+          "weight": 0.042,
+          "market": "美股",
+          "sector": "交换芯片与网络ASIC"
+        },
+        {
+          "name": "TSLA",
+          "code": "TSLA",
+          "full_name": "特斯拉",
+          "weight": 0.032,
+          "market": "美股",
+          "sector": "新能源汽车与智驾AI"
+        }
+      ]
+    },
+    {
+      "code": "006479",
+      "name": "广发纳斯达克100ETF联接C",
+      "category": "QDII并联纳指",
+      "sector": "海外美股科技",
+      "cost": 4000.0,
+      "market_value": 3600.0,
+      "pnl": -400.0,
+      "pnl_rate": -0.1,
+      "clone_group_id": "CLONE_QDII_NDX100",
+      "top_holdings": [
+        {
+          "name": "NVDA",
+          "code": "NVDA",
+          "full_name": "英伟达",
+          "weight": 0.088,
+          "market": "美股",
+          "sector": "AI算力芯片与GPU"
+        },
+        {
+          "name": "AAPL",
+          "code": "AAPL",
+          "full_name": "苹果",
+          "weight": 0.082,
+          "market": "美股",
+          "sector": "消费电子与iOS生态"
+        },
+        {
+          "name": "MSFT",
+          "code": "MSFT",
+          "full_name": "微软",
+          "weight": 0.078,
+          "market": "美股",
+          "sector": "软件与Azure云计算"
+        },
+        {
+          "name": "AMZN",
+          "code": "AMZN",
+          "full_name": "亚马逊",
+          "weight": 0.052,
+          "market": "美股",
+          "sector": "电商与AWS云计算"
+        },
+        {
+          "name": "META",
+          "code": "META",
+          "full_name": "Meta",
+          "weight": 0.048,
+          "market": "美股",
+          "sector": "社交媒体与开源AI"
+        },
+        {
+          "name": "GOOGL",
+          "code": "GOOGL",
+          "full_name": "谷歌",
+          "weight": 0.045,
+          "market": "美股",
+          "sector": "搜索与Google Cloud"
+        },
+        {
+          "name": "AVGO",
+          "code": "AVGO",
+          "full_name": "博通",
+          "weight": 0.042,
+          "market": "美股",
+          "sector": "交换芯片与网络ASIC"
+        },
+        {
+          "name": "TSLA",
+          "code": "TSLA",
+          "full_name": "特斯拉",
+          "weight": 0.032,
+          "market": "美股",
+          "sector": "新能源汽车与智驾AI"
+        }
+      ]
+    },
+    {
+      "code": "000834",
+      "name": "大成纳斯达克100联接A",
+      "category": "QDII并联纳指",
+      "sector": "海外美股科技",
+      "cost": 5000.0,
+      "market_value": 4550.0,
+      "pnl": -450.0,
+      "pnl_rate": -0.09,
+      "clone_group_id": "CLONE_QDII_NDX100",
+      "top_holdings": [
+        {
+          "name": "NVDA",
+          "code": "NVDA",
+          "full_name": "英伟达",
+          "weight": 0.088,
+          "market": "美股",
+          "sector": "AI算力芯片与GPU"
+        },
+        {
+          "name": "AAPL",
+          "code": "AAPL",
+          "full_name": "苹果",
+          "weight": 0.082,
+          "market": "美股",
+          "sector": "消费电子与iOS生态"
+        },
+        {
+          "name": "MSFT",
+          "code": "MSFT",
+          "full_name": "微软",
+          "weight": 0.078,
+          "market": "美股",
+          "sector": "软件与Azure云计算"
+        },
+        {
+          "name": "AMZN",
+          "code": "AMZN",
+          "full_name": "亚马逊",
+          "weight": 0.052,
+          "market": "美股",
+          "sector": "电商与AWS云计算"
+        },
+        {
+          "name": "META",
+          "code": "META",
+          "full_name": "Meta",
+          "weight": 0.048,
+          "market": "美股",
+          "sector": "社交媒体与开源AI"
+        },
+        {
+          "name": "GOOGL",
+          "code": "GOOGL",
+          "full_name": "谷歌",
+          "weight": 0.045,
+          "market": "美股",
+          "sector": "搜索与Google Cloud"
+        },
+        {
+          "name": "AVGO",
+          "code": "AVGO",
+          "full_name": "博通",
+          "weight": 0.042,
+          "market": "美股",
+          "sector": "交换芯片与网络ASIC"
+        },
+        {
+          "name": "TSLA",
+          "code": "TSLA",
+          "full_name": "特斯拉",
+          "weight": 0.032,
+          "market": "美股",
+          "sector": "新能源汽车与智驾AI"
+        }
+      ]
+    },
+    {
+      "code": "160213",
+      "name": "国泰纳斯达克100(QDII-LOF)",
+      "category": "QDII并联纳指",
+      "sector": "海外美股科技",
+      "cost": 5000.0,
+      "market_value": 4450.0,
+      "pnl": -550.0,
+      "pnl_rate": -0.11,
+      "clone_group_id": "CLONE_QDII_NDX100",
+      "top_holdings": [
+        {
+          "name": "NVDA",
+          "code": "NVDA",
+          "full_name": "英伟达",
+          "weight": 0.088,
+          "market": "美股",
+          "sector": "AI算力芯片与GPU"
+        },
+        {
+          "name": "AAPL",
+          "code": "AAPL",
+          "full_name": "苹果",
+          "weight": 0.082,
+          "market": "美股",
+          "sector": "消费电子与iOS生态"
+        },
+        {
+          "name": "MSFT",
+          "code": "MSFT",
+          "full_name": "微软",
+          "weight": 0.078,
+          "market": "美股",
+          "sector": "软件与Azure云计算"
+        },
+        {
+          "name": "AMZN",
+          "code": "AMZN",
+          "full_name": "亚马逊",
+          "weight": 0.052,
+          "market": "美股",
+          "sector": "电商与AWS云计算"
+        },
+        {
+          "name": "META",
+          "code": "META",
+          "full_name": "Meta",
+          "weight": 0.048,
+          "market": "美股",
+          "sector": "社交媒体与开源AI"
+        },
+        {
+          "name": "GOOGL",
+          "code": "GOOGL",
+          "full_name": "谷歌",
+          "weight": 0.045,
+          "market": "美股",
+          "sector": "搜索与Google Cloud"
+        },
+        {
+          "name": "AVGO",
+          "code": "AVGO",
+          "full_name": "博通",
+          "weight": 0.042,
+          "market": "美股",
+          "sector": "交换芯片与网络ASIC"
+        },
+        {
+          "name": "TSLA",
+          "code": "TSLA",
+          "full_name": "特斯拉",
+          "weight": 0.032,
+          "market": "美股",
+          "sector": "新能源汽车与智驾AI"
+        }
+      ]
+    },
+    {
+      "code": "000043",
+      "name": "嘉实美国成长股票(QDII)",
+      "category": "QDII并联纳指",
+      "sector": "海外美股科技",
+      "cost": 4000.0,
+      "market_value": 3520.0,
+      "pnl": -480.0,
+      "pnl_rate": -0.12,
+      "clone_group_id": "CLONE_QDII_NDX100",
+      "top_holdings": [
+        {
+          "name": "NVDA",
+          "code": "NVDA",
+          "full_name": "英伟达",
+          "weight": 0.088,
+          "market": "美股",
+          "sector": "AI算力芯片与GPU"
+        },
+        {
+          "name": "AAPL",
+          "code": "AAPL",
+          "full_name": "苹果",
+          "weight": 0.082,
+          "market": "美股",
+          "sector": "消费电子与iOS生态"
+        },
+        {
+          "name": "MSFT",
+          "code": "MSFT",
+          "full_name": "微软",
+          "weight": 0.078,
+          "market": "美股",
+          "sector": "软件与Azure云计算"
+        },
+        {
+          "name": "AMZN",
+          "code": "AMZN",
+          "full_name": "亚马逊",
+          "weight": 0.052,
+          "market": "美股",
+          "sector": "电商与AWS云计算"
+        },
+        {
+          "name": "META",
+          "code": "META",
+          "full_name": "Meta",
+          "weight": 0.048,
+          "market": "美股",
+          "sector": "社交媒体与开源AI"
+        },
+        {
+          "name": "GOOGL",
+          "code": "GOOGL",
+          "full_name": "谷歌",
+          "weight": 0.045,
+          "market": "美股",
+          "sector": "搜索与Google Cloud"
+        },
+        {
+          "name": "AVGO",
+          "code": "AVGO",
+          "full_name": "博通",
+          "weight": 0.042,
+          "market": "美股",
+          "sector": "交换芯片与网络ASIC"
+        },
+        {
+          "name": "TSLA",
+          "code": "TSLA",
+          "full_name": "特斯拉",
+          "weight": 0.032,
+          "market": "美股",
+          "sector": "新能源汽车与智驾AI"
+        }
+      ]
+    },
+    {
+      "code": "040046",
+      "name": "华安纳斯达克100ETF联接A",
+      "category": "QDII并联纳指",
+      "sector": "海外美股科技",
+      "cost": 5000.0,
+      "market_value": 4500.0,
+      "pnl": -500.0,
+      "pnl_rate": -0.1,
+      "clone_group_id": "CLONE_QDII_NDX100",
+      "top_holdings": [
+        {
+          "name": "NVDA",
+          "code": "NVDA",
+          "full_name": "英伟达",
+          "weight": 0.088,
+          "market": "美股",
+          "sector": "AI算力芯片与GPU"
+        },
+        {
+          "name": "AAPL",
+          "code": "AAPL",
+          "full_name": "苹果",
+          "weight": 0.082,
+          "market": "美股",
+          "sector": "消费电子与iOS生态"
+        },
+        {
+          "name": "MSFT",
+          "code": "MSFT",
+          "full_name": "微软",
+          "weight": 0.078,
+          "market": "美股",
+          "sector": "软件与Azure云计算"
+        },
+        {
+          "name": "AMZN",
+          "code": "AMZN",
+          "full_name": "亚马逊",
+          "weight": 0.052,
+          "market": "美股",
+          "sector": "电商与AWS云计算"
+        },
+        {
+          "name": "META",
+          "code": "META",
+          "full_name": "Meta",
+          "weight": 0.048,
+          "market": "美股",
+          "sector": "社交媒体与开源AI"
+        },
+        {
+          "name": "GOOGL",
+          "code": "GOOGL",
+          "full_name": "谷歌",
+          "weight": 0.045,
+          "market": "美股",
+          "sector": "搜索与Google Cloud"
+        },
+        {
+          "name": "AVGO",
+          "code": "AVGO",
+          "full_name": "博通",
+          "weight": 0.042,
+          "market": "美股",
+          "sector": "交换芯片与网络ASIC"
+        },
+        {
+          "name": "TSLA",
+          "code": "TSLA",
+          "full_name": "特斯拉",
+          "weight": 0.032,
+          "market": "美股",
+          "sector": "新能源汽车与智驾AI"
+        }
+      ]
+    },
+    {
+      "code": "016055",
+      "name": "华夏纳斯达克100ETF联接A",
+      "category": "QDII并联纳指",
+      "sector": "海外美股科技",
+      "cost": 3000.0,
+      "market_value": 2730.0,
+      "pnl": -270.0,
+      "pnl_rate": -0.09,
+      "clone_group_id": "CLONE_QDII_NDX100",
+      "top_holdings": [
+        {
+          "name": "NVDA",
+          "code": "NVDA",
+          "full_name": "英伟达",
+          "weight": 0.088,
+          "market": "美股",
+          "sector": "AI算力芯片与GPU"
+        },
+        {
+          "name": "AAPL",
+          "code": "AAPL",
+          "full_name": "苹果",
+          "weight": 0.082,
+          "market": "美股",
+          "sector": "消费电子与iOS生态"
+        },
+        {
+          "name": "MSFT",
+          "code": "MSFT",
+          "full_name": "微软",
+          "weight": 0.078,
+          "market": "美股",
+          "sector": "软件与Azure云计算"
+        },
+        {
+          "name": "AMZN",
+          "code": "AMZN",
+          "full_name": "亚马逊",
+          "weight": 0.052,
+          "market": "美股",
+          "sector": "电商与AWS云计算"
+        },
+        {
+          "name": "META",
+          "code": "META",
+          "full_name": "Meta",
+          "weight": 0.048,
+          "market": "美股",
+          "sector": "社交媒体与开源AI"
+        },
+        {
+          "name": "GOOGL",
+          "code": "GOOGL",
+          "full_name": "谷歌",
+          "weight": 0.045,
+          "market": "美股",
+          "sector": "搜索与Google Cloud"
+        },
+        {
+          "name": "AVGO",
+          "code": "AVGO",
+          "full_name": "博通",
+          "weight": 0.042,
+          "market": "美股",
+          "sector": "交换芯片与网络ASIC"
+        },
+        {
+          "name": "TSLA",
+          "code": "TSLA",
+          "full_name": "特斯拉",
+          "weight": 0.032,
+          "market": "美股",
+          "sector": "新能源汽车与智驾AI"
+        }
+      ]
+    },
+    {
+      "code": "009880",
+      "name": "华宝纳斯达克科技ETF联接A",
+      "category": "QDII并联纳指",
+      "sector": "海外美股科技",
+      "cost": 3000.0,
+      "market_value": 2650.0,
+      "pnl": -350.0,
+      "pnl_rate": -0.1167,
+      "clone_group_id": "CLONE_QDII_NDX100",
+      "top_holdings": [
+        {
+          "name": "NVDA",
+          "code": "NVDA",
+          "full_name": "英伟达",
+          "weight": 0.088,
+          "market": "美股",
+          "sector": "AI算力芯片与GPU"
+        },
+        {
+          "name": "AAPL",
+          "code": "AAPL",
+          "full_name": "苹果",
+          "weight": 0.082,
+          "market": "美股",
+          "sector": "消费电子与iOS生态"
+        },
+        {
+          "name": "MSFT",
+          "code": "MSFT",
+          "full_name": "微软",
+          "weight": 0.078,
+          "market": "美股",
+          "sector": "软件与Azure云计算"
+        },
+        {
+          "name": "AMZN",
+          "code": "AMZN",
+          "full_name": "亚马逊",
+          "weight": 0.052,
+          "market": "美股",
+          "sector": "电商与AWS云计算"
+        },
+        {
+          "name": "META",
+          "code": "META",
+          "full_name": "Meta",
+          "weight": 0.048,
+          "market": "美股",
+          "sector": "社交媒体与开源AI"
+        },
+        {
+          "name": "GOOGL",
+          "code": "GOOGL",
+          "full_name": "谷歌",
+          "weight": 0.045,
+          "market": "美股",
+          "sector": "搜索与Google Cloud"
+        },
+        {
+          "name": "AVGO",
+          "code": "AVGO",
+          "full_name": "博通",
+          "weight": 0.042,
+          "market": "美股",
+          "sector": "交换芯片与网络ASIC"
+        },
+        {
+          "name": "TSLA",
+          "code": "TSLA",
+          "full_name": "特斯拉",
+          "weight": 0.032,
+          "market": "美股",
+          "sector": "新能源汽车与智驾AI"
+        }
+      ]
+    },
+    {
+      "code": "320007",
+      "name": "诺安成长混合",
+      "category": "A股半导体重仓",
+      "sector": "A股半导体与芯片",
+      "cost": 8000.0,
+      "market_value": 6160.0,
+      "pnl": -1840.0,
+      "pnl_rate": -0.23,
+      "clone_group_id": null,
+      "top_holdings": [
+        {
+          "name": "北方华创",
+          "code": "002371",
+          "weight": 0.0980194805194805,
+          "market": "A股",
+          "sector": "半导体前道核心设备"
+        },
+        {
+          "name": "中芯国际",
+          "code": "688981",
+          "weight": 0.09496753246753246,
+          "market": "A股",
+          "sector": "晶圆代工制造龙头"
+        },
+        {
+          "name": "韦尔股份",
+          "code": "603501",
+          "weight": 0.08198051948051949,
+          "market": "A股",
+          "sector": "CIS图像传感与模拟芯片"
+        }
+      ]
+    },
+    {
+      "code": "519674",
+      "name": "银河创新成长混合A",
+      "category": "A股半导体重仓",
+      "sector": "A股半导体与芯片",
+      "cost": 7000.0,
+      "market_value": 5530.0,
+      "pnl": -1470.0,
+      "pnl_rate": -0.21,
+      "clone_group_id": null,
+      "top_holdings": [
+        {
+          "name": "海光信息",
+          "code": "688041",
+          "weight": 0.0949367088607595,
+          "market": "A股",
+          "sector": "x86 CPU与DCU加速芯片"
+        },
+        {
+          "name": "中微公司",
+          "code": "688012",
+          "weight": 0.08987341772151898,
+          "market": "A股",
+          "sector": "等离子刻蚀设备"
+        },
+        {
+          "name": "北方华创",
+          "code": "002371",
+          "weight": 0.08788426763110307,
+          "market": "A股",
+          "sector": "半导体前道核心设备"
+        },
+        {
+          "name": "中芯国际",
+          "code": "688981",
+          "weight": 0.05985533453887884,
+          "market": "A股",
+          "sector": "晶圆代工制造龙头"
+        }
+      ]
+    },
+    {
+      "code": "008888",
+      "name": "华夏国证半导体芯片ETF联接A",
+      "category": "A股半导体指数",
+      "sector": "A股半导体与芯片",
+      "cost": 6000.0,
+      "market_value": 4860.0,
+      "pnl": -1140.0,
+      "pnl_rate": -0.19,
+      "clone_group_id": null,
+      "top_holdings": [
+        {
+          "name": "中芯国际",
+          "code": "688981",
+          "weight": 0.1,
+          "market": "A股",
+          "sector": "晶圆代工制造龙头"
+        },
+        {
+          "name": "北方华创",
+          "code": "002371",
+          "weight": 0.09804526748971193,
+          "market": "A股",
+          "sector": "半导体前道核心设备"
+        },
+        {
+          "name": "海光信息",
+          "code": "688041",
+          "weight": 0.08508230452674898,
+          "market": "A股",
+          "sector": "x86 CPU与DCU加速芯片"
+        },
+        {
+          "name": "韦尔股份",
+          "code": "603501",
+          "weight": 0.075,
+          "market": "A股",
+          "sector": "CIS图像传感与模拟芯片"
+        },
+        {
+          "name": "中微公司",
+          "code": "688012",
+          "weight": 0.06512345679012346,
+          "market": "A股",
+          "sector": "等离子刻蚀设备"
+        }
+      ]
+    },
+    {
+      "code": "011102",
+      "name": "广发中证全指半导体联接A",
+      "category": "A股半导体指数",
+      "sector": "A股半导体与芯片",
+      "cost": 4000.0,
+      "market_value": 3240.0,
+      "pnl": -760.0,
+      "pnl_rate": -0.19,
+      "clone_group_id": null,
+      "top_holdings": [
+        {
+          "name": "中芯国际",
+          "code": "688981",
+          "weight": 0.10030864197530864,
+          "market": "A股",
+          "sector": "晶圆代工制造龙头"
+        },
+        {
+          "name": "北方华创",
+          "code": "002371",
+          "weight": 0.09808641975308642,
+          "market": "A股",
+          "sector": "半导体前道核心设备"
+        },
+        {
+          "name": "海光信息",
+          "code": "688041",
+          "weight": 0.08499999999999999,
+          "market": "A股",
+          "sector": "x86 CPU与DCU加速芯片"
+        },
+        {
+          "name": "韦尔股份",
+          "code": "603501",
+          "weight": 0.07503086419753087,
+          "market": "A股",
+          "sector": "CIS图像传感与模拟芯片"
+        },
+        {
+          "name": "中微公司",
+          "code": "688012",
+          "weight": 0.06503086419753086,
+          "market": "A股",
+          "sector": "等离子刻蚀设备"
+        }
+      ]
+    },
+    {
+      "code": "001594",
+      "name": "天弘中证计算机ETF联接A",
+      "category": "软件与AI应用",
+      "sector": "计算机与软件",
+      "cost": 4000.0,
+      "market_value": 3360.0,
+      "pnl": -640.0,
+      "pnl_rate": -0.16,
+      "clone_group_id": null,
+      "top_holdings": [
+        {
+          "name": "科大讯飞",
+          "code": "002230",
+          "weight": 0.1,
+          "market": "A股",
+          "sector": "人工智能与语音"
+        },
+        {
+          "name": "金山办公",
+          "code": "688111",
+          "weight": 0.09,
+          "market": "A股",
+          "sector": "办公软件与信创"
+        },
+        {
+          "name": "同花顺",
+          "code": "300033",
+          "weight": 0.08,
+          "market": "A股",
+          "sector": "金融科技与软件"
+        }
+      ]
+    },
+    {
+      "code": "012414",
+      "name": "招商中证消费电子主题联接A",
+      "category": "消费电子硬件",
+      "sector": "消费电子与硬件",
+      "cost": 3000.0,
+      "market_value": 2490.0,
+      "pnl": -510.0,
+      "pnl_rate": -0.17,
+      "clone_group_id": null,
+      "top_holdings": [
+        {
+          "name": "立讯精密",
+          "code": "002475",
+          "weight": 0.12,
+          "market": "A股",
+          "sector": "精密电子制造"
+        },
+        {
+          "name": "京东方A",
+          "code": "000725",
+          "weight": 0.09,
+          "market": "A股",
+          "sector": "显示面板龙头"
+        },
+        {
+          "name": "工业富联",
+          "code": "601138",
+          "weight": 0.08,
+          "market": "A股",
+          "sector": "AI服务器算力制造"
+        }
+      ]
+    },
+    {
+      "code": "005827",
+      "name": "易方达蓝筹精选混合",
+      "category": "核心蓝筹/互联网",
+      "sector": "核心蓝筹",
+      "cost": 6000.0,
+      "market_value": 5040.0,
+      "pnl": -960.0,
+      "pnl_rate": -0.16,
+      "clone_group_id": null,
+      "top_holdings": [
+        {
+          "name": "贵州茅台",
+          "code": "600519",
+          "weight": 0.095,
+          "market": "A股",
+          "sector": "高端白酒龙头"
+        },
+        {
+          "name": "五粮液",
+          "code": "000858",
+          "weight": 0.09200396825396825,
+          "market": "A股",
+          "sector": "浓香白酒龙头"
+        },
+        {
+          "name": "腾讯控股",
+          "code": "00700",
+          "weight": 0.098,
+          "market": "港股",
+          "sector": "社交与互联网科技"
+        }
+      ]
+    },
+    {
+      "code": "001616",
+      "name": "嘉实环保低碳股票",
+      "category": "新能源光伏锂电",
+      "sector": "新能源低碳",
+      "cost": 4000.0,
+      "market_value": 3000.0,
+      "pnl": -1000.0,
+      "pnl_rate": -0.25,
+      "clone_group_id": null,
+      "top_holdings": [
+        {
+          "name": "宁德时代",
+          "code": "300750",
+          "weight": 0.1,
+          "market": "A股",
+          "sector": "动力电池龙头"
+        },
+        {
+          "name": "比亚迪",
+          "code": "002594",
+          "weight": 0.09,
+          "market": "A股",
+          "sector": "新能源整车"
+        }
+      ]
+    },
+    {
+      "code": "161725",
+      "name": "招商中证白酒指数(LOF)A",
+      "category": "白酒大消费",
+      "sector": "白酒消费",
+      "cost": 4000.0,
+      "market_value": 3480.0,
+      "pnl": -520.0,
+      "pnl_rate": -0.13,
+      "clone_group_id": null,
+      "top_holdings": [
+        {
+          "name": "贵州茅台",
+          "code": "600519",
+          "weight": 0.15,
+          "market": "A股",
+          "sector": "高端白酒龙头"
+        },
+        {
+          "name": "五粮液",
+          "code": "000858",
+          "weight": 0.15,
+          "market": "A股",
+          "sector": "浓香白酒龙头"
+        }
+      ]
+    },
+    {
+      "code": "003095",
+      "name": "中欧医疗健康混合A",
+      "category": "医疗医药CXO",
+      "sector": "医疗健康",
+      "cost": 5000.0,
+      "market_value": 3650.0,
+      "pnl": -1350.0,
+      "pnl_rate": -0.27,
+      "clone_group_id": null,
+      "top_holdings": [
+        {
+          "name": "药明康德",
+          "code": "603259",
+          "weight": 0.1,
+          "market": "A股",
+          "sector": "CXO医药研发外包"
+        },
+        {
+          "name": "爱尔眼科",
+          "code": "300015",
+          "weight": 0.09,
+          "market": "A股",
+          "sector": "医疗服务眼科"
+        },
+        {
+          "name": "恒瑞医药",
+          "code": "600276",
+          "weight": 0.08,
+          "market": "A股",
+          "sector": "创新药龙头"
+        }
+      ]
+    },
+    {
+      "code": "001180",
+      "name": "易方达健康产业混合",
+      "category": "医疗健康",
+      "sector": "医疗健康",
+      "cost": 2000.0,
+      "market_value": 1720.0,
+      "pnl": -280.0,
+      "pnl_rate": -0.14,
+      "clone_group_id": null,
+      "top_holdings": [
+        {
+          "name": "恒瑞医药",
+          "code": "600276",
+          "weight": 0.1,
+          "market": "A股",
+          "sector": "创新药龙头"
+        },
+        {
+          "name": "药明康德",
+          "code": "603259",
+          "weight": 0.09,
+          "market": "A股",
+          "sector": "CXO医药研发外包"
+        }
+      ]
+    },
+    {
+      "code": "005669",
+      "name": "前海开源公用事业股票",
+      "category": "电力与核电绿电",
+      "sector": "公用电力",
+      "cost": 2000.0,
+      "market_value": 2080.0,
+      "pnl": 80.0,
+      "pnl_rate": 0.04,
+      "clone_group_id": null,
+      "top_holdings": [
+        {
+          "name": "中国核电",
+          "code": "601985",
+          "weight": 0.1,
+          "market": "A股",
+          "sector": "核电电力公用"
+        },
+        {
+          "name": "长江电力",
+          "code": "600900",
+          "weight": 0.09,
+          "market": "A股",
+          "sector": "水电公用"
+        }
+      ]
+    },
+    {
+      "code": "000216",
+      "name": "华安黄金易ETF联接A",
+      "category": "黄金大宗避险",
+      "sector": "黄金避险",
+      "cost": 3000.0,
+      "market_value": 3840.0,
+      "pnl": 840.0,
+      "pnl_rate": 0.28,
+      "clone_group_id": null,
+      "top_holdings": [
+        {
+          "name": "黄金现货合约AU9999",
+          "code": "AU9999",
+          "weight": 0.95,
+          "market": "大宗商品",
+          "sector": "贵金属大宗避险"
+        }
+      ]
+    },
+    {
+      "code": "001595",
+      "name": "富国中证银行指数联接A",
+      "category": "银行高股息",
+      "sector": "银行红利",
+      "cost": 2500.0,
+      "market_value": 2900.0,
+      "pnl": 400.0,
+      "pnl_rate": 0.16,
+      "clone_group_id": null,
+      "top_holdings": [
+        {
+          "name": "招商银行",
+          "code": "600036",
+          "weight": 0.15,
+          "market": "A股",
+          "sector": "零售银行龙头"
+        },
+        {
+          "name": "兴业银行",
+          "code": "601166",
+          "weight": 0.12,
+          "market": "A股",
+          "sector": "股份制银行"
+        }
+      ]
+    },
+    {
+      "code": "001052",
+      "name": "华夏中证500ETF联接A",
+      "category": "中盘宽基",
+      "sector": "中盘宽基",
+      "cost": 2000.0,
+      "market_value": 1880.0,
+      "pnl": -120.0,
+      "pnl_rate": -0.06,
+      "clone_group_id": null,
+      "top_holdings": [
+        {
+          "name": "中际旭创",
+          "code": "300308",
+          "weight": 0.03,
+          "market": "A股",
+          "sector": "光模块龙头"
+        },
+        {
+          "name": "新易盛",
+          "code": "300502",
+          "weight": 0.03,
+          "market": "A股",
+          "sector": "光模块"
+        }
+      ]
+    },
+    {
+      "code": "001875",
+      "name": "前海开源国家安全混合",
+      "category": "国防军工装备",
+      "sector": "国防军工",
+      "cost": 1500.0,
+      "market_value": 1350.0,
+      "pnl": -150.0,
+      "pnl_rate": -0.1,
+      "clone_group_id": null,
+      "top_holdings": [
+        {
+          "name": "中航西飞",
+          "code": "000768",
+          "weight": 0.1,
+          "market": "A股",
+          "sector": "国防军工飞机"
+        },
+        {
+          "name": "航发动力",
+          "code": "600893",
+          "weight": 0.09,
+          "market": "A股",
+          "sector": "航空发动机"
+        }
+      ]
+    },
+    {
+      "code": "000198",
+      "name": "天弘同利债券(LOF)A",
+      "category": "纯债流动性防守",
+      "sector": "纯债防守",
+      "cost": 1000.0,
+      "market_value": 1020.0,
+      "pnl": 20.0,
+      "pnl_rate": 0.02,
+      "clone_group_id": null,
+      "top_holdings": [
+        {
+          "name": "23国债01",
+          "code": "019701",
+          "weight": 0.3,
+          "market": "债券",
+          "sector": "利率债纯债防守"
+        },
+        {
+          "name": "22进出03",
+          "code": "220303",
+          "weight": 0.25,
+          "market": "债券",
+          "sector": "政策金融债"
+        }
+      ]
+    }
+  ]
+}
