@@ -342,19 +342,19 @@ class TestCircuitBreakerEngine(unittest.TestCase):
         pen_res = penetrate_portfolio(data)
 
         # 1. 加仓深度浮亏的华夏全球科技先锋 (-39.79%) -> 拦截并激活 48h 冷静期
-        f_hx = next(f for f in pen_res["funds"] if f["code"] == "001008")
+        f_hx = next(f for f in pen_res["funds"] if f["code"] == "005698")
         res_hx = simulate_buy_order(pen_res, f_hx, 1000.0)
         self.assertEqual(res_hx["status"], "BLOCKED")
         self.assertEqual(res_hx["cooling_off_hours"], 48)
 
         # 2. 加仓未大幅浮亏的广发纳指 (-0.05%) -> 放行
-        f_gf = next(f for f in pen_res["funds"] if f["code"] == "001004")
+        f_gf = next(f for f in pen_res["funds"] if f["code"] == "270042")
         res_gf = simulate_buy_order(pen_res, f_gf, 1000.0)
         self.assertEqual(res_gf["status"], "APPROVED")
         self.assertEqual(res_gf["action"], "PASS")
 
         # 3. 加仓建信上海金 (防守资产) -> 放行并稀释泛科技
-        f_gold = next(f for f in pen_res["funds"] if f["code"] == "001000")
+        f_gold = next(f for f in pen_res["funds"] if f["code"] == "008347")
         res_gold = simulate_buy_order(pen_res, f_gold, 2000.0)
         self.assertEqual(res_gold["status"], "APPROVED")
         self.assertEqual(res_gold["action"], "PASS")
@@ -370,14 +370,14 @@ class TestCircuitBreakerEngine(unittest.TestCase):
         self.assertIn("-14.9%", res_ct["intercept_reason"])
 
         # 5. 加仓深度浮亏的新能源板块 银华中证光伏产业 (-14.78%) -> 拦截并激活 48h 冷静期
-        f_pv = next(f for f in pen_res["funds"] if f["code"] == "001009")
+        f_pv = next(f for f in pen_res["funds"] if f["code"] == "012365")
         res_pv = simulate_buy_order(pen_res, f_pv, 1000.0)
         self.assertEqual(res_pv["status"], "BLOCKED")
         self.assertEqual(res_pv["cooling_off_hours"], 48)
         self.assertIn("P1 逆势追跌拦截", res_pv["intercept_reason"])
 
         # 6. 加仓重度套牢的财通成长优选 (-52.00%) -> 拦截并激活 48h 冷静期
-        f_growth = next(f for f in pen_res["funds"] if f["code"] == "001022")
+        f_growth = next(f for f in pen_res["funds"] if f["code"] == "001480")
         res_growth = simulate_buy_order(pen_res, f_growth, 1000.0)
         self.assertEqual(res_growth["status"], "BLOCKED")
         self.assertEqual(res_growth["cooling_off_hours"], 48)
